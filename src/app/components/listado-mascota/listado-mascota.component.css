@@ -1,0 +1,64 @@
+table {
+	width: 100%;
+}
+
+.mat-mdc-form-field {
+	font-size: 14px;
+	width: 100%;
+}
+
+td,
+th {
+	width: 15%;
+}
+
+/* Aplica el efecto hover a todas las filas excepto la primera */
+
+tr:hover td {
+	background: #00a9ff;
+	cursor: pointer;
+	color: white;
+}
+
+/* Aplica el efecto active a todas las filas excepto la primera */
+tr:active td {
+	background: #5903ee; /* Cambiar el color al hacer clic a un tono azul */
+	transition: background 0.3s ease-in-out; /* Agregar transición */
+	color: white;
+}
+
+.delete {
+	color: #4f5b66;
+	transition: all;
+	transition-duration: 200ms;
+}
+
+.delete:hover {
+	color: #f44201;
+	transform: scale(1.2);
+}
+
+.edit {
+	color: #f8cf05;
+	margin-right: 1rem;
+	transition: all;
+	transition-duration: 200ms;
+}
+
+.edit:hover {
+	color: #fca635;
+	transform: scale(1.2);
+}
+
+.btn-primary {
+	font-size: 0.8rem;
+	line-height: 1rem;
+}
+
+.btn-icons {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+

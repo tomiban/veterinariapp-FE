@@ -1,0 +1,23 @@
+.card {
+	margin-top: 10px;
+}
+
+mat-card-content {
+  margin-top: 20px;
+}
+
+mat-grid-tile {
+  padding: 10px 0 0 10px;
+}
+
+mat-form-field {
+  width: 100%;
+  margin: 10px;
+}
+
+.btn-agregar {
+  padding: 1.6rem 0;
+  font-size: 1.2rem;
+  width: 48%;
+  margin: 0 auto;
+}
