@@ -1,0 +1,31 @@
+mat-card {
+	width: 100%;
+	margin-top: 3rem;
+}
+mat-card-content {
+  margin-top: 15px;
+}
+
+mat-grid-tile {
+	padding: 10px 0 0 10px;
+}
+
+form {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+mat-form-field {
+	width: 100%;
+	margin-right: 20px;
+}
+
+.container-btn {
+	display: flex;
+	justify-content: space-between;
+}
+
+.btn-agregar {
+	margin-right: 10px; /* Ajusta el margen entre los botones según tus preferencias */
+}

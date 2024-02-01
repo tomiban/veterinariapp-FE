@@ -1,0 +1,211 @@
+.grid-container {
+	margin-top: 30px;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 30px;
+}
+
+.card {
+	padding: 20px;
+}
+
+.card-title {
+	font-size: 2rem;
+	grid-column: 1 / -1; /* Ocupar todas las columnas disponibles */
+	text-align: center;
+}
+
+.card-content {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	margin-top: 1.4rem;
+	align-items: center;
+}
+
+.info-dueño p {
+	padding: 5px;
+}
+
+.image-column,
+.info-column {
+	justify-self: center; /* Alinea la columna de la imagen a la izquierda */
+}
+
+.image-column img {
+	max-width: 200px; /* Establece el ancho máximo de la imagen al 100% del contenedor */
+	height: auto; /* Permite que la altura se ajuste proporcionalmente al ancho */
+}
+
+.info-column p {
+	padding: 5px 0; /* Alinea la columna de la información a la derecha */
+	font-size: 1rem;
+}
+.card-subtitles {
+	font-weight: 500;
+	font-size: 1.2rem;
+}
+
+.mat-card-actions {
+	grid-column: 1 / -1; /* Ocupar todas las columnas disponibles */
+	text-align: center;
+}
+
+.chip-container {
+	display: flex;
+	justify-content: center;
+}
+
+.toggle-container {
+	display: flex;
+	justify-content: end;
+}
+
+.toggle {
+	margin: 10px 15px 0 0;
+}
+
+.custom-chip {
+	width: 80%;
+	padding: 8px 16px;
+	background-color: #e94033; /* Color warn */
+	color: #ffffff; /* Color del texto */
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background-color 0.3s;
+	margin-top: 10px;
+	font-size: 1.1rem;
+	font-weight: 500;
+	text-align: center;
+}
+
+.custom-chip:active {
+	background-color: #a61f1f; /* Color de fondo al hacer clic */
+	color: #ffffff; /* Color del texto al hacer clic */
+}
+
+.list-mascota {
+	margin: 40px 0px;
+}
+
+table {
+	width: 100%;
+}
+
+.mat-mdc-form-field {
+	font-size: 14px;
+	width: 100%;
+}
+
+td,
+th {
+	width: 20%;
+}
+
+/* Aplica el efecto hover a todas las filas excepto la primera */
+
+tr.data-row:not(.expanded-row):hover td {
+	background: whitesmoke;
+	cursor: pointer;
+	color: black; /* Cambia al color de texto deseado */
+}
+
+/* Aplica el efecto active a todas las filas excepto la primera */
+tr.data-row:not(.expanded-row):active td {
+	background: #efefef;
+	color: black; /* Cambia al color de texto deseado */
+}
+
+.delete {
+	color: #4f5b66;
+	transition: all;
+	transition-duration: 200ms;
+}
+
+.delete:hover {
+	color: #f44201;
+	transform: scale(1.2);
+}
+
+.edit {
+	color: #f8cf05;
+	margin-right: 1rem;
+	transition: all;
+	transition-duration: 200ms;
+}
+
+.edit:hover {
+	color: #fca635;
+	transform: scale(1.2);
+}
+
+.btn-primary {
+	font-size: 0.8rem;
+	line-height: 1rem;
+}
+
+.btn-icons {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+}
+
+.btn-container {
+	text-align: center;
+}
+
+tr.expanded-row:hover {
+	background: initial;
+	color: initial;
+}
+
+tr.expanded-row {
+	height: 0;
+}
+
+tr.data-row td {
+	border-bottom-width: 0;
+}
+
+.expanded-detail {
+	overflow: hidden;
+	transition: box-shadow 0.3s ease-in-out;
+}
+.dosis-item {
+  display: grid;
+  align-items: center;
+  grid-template-columns: max-content 1fr max-content; /* Icono de vacuna, información, botón de remover */
+  gap: 10px; /* Espacio entre las columnas */
+  margin-top: 15px;
+}
+
+.dosis-info {
+  display: flex;
+  font-size: 0.8rem;
+	margin-left: 11rem;
+	gap: 6.5rem;
+}
+
+.info-details {
+  display: flex; 
+}
+
+.info-label {
+  font-weight: bold;
+  color: #333;
+	margin-right: 10px;
+}
+
+.info-value {
+  font-style: italic;
+  color: #555;
+}
+
+.dosis-icon {
+  margin-right: 12px;
+}
+
+.dosis-icon:last-child {
+ padding-right: 30px; /* Elimina el margen derecho para el último elemento (botón de remover) */
+  justify-self: end; /* Alinea el botón de remover al final de la cuadrícula */
+}

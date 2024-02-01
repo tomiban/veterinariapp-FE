@@ -10,6 +10,7 @@ body {
 }
 .container {
 	margin: 1% 5%;
+	height: auto;
 }
 .title {
 	background-color: #37bbed;

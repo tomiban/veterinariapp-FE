@@ -1,0 +1,98 @@
+<div
+	class="title"
+	[ngStyle]="{ 'background-color': isVacuna && '#6d42ba' }">
+	<h1>{{ titulo }} Vacuna</h1>
+</div>
+@if (loading) {
+<mat-progress-bar
+	mode="indeterminate"
+	color="accent"></mat-progress-bar>
+}
+<div class="container">
+	<mat-card>
+		<mat-card-header>
+			<mat-card-subtitle> Datos de la vacuna </mat-card-subtitle>
+		</mat-card-header>
+		<mat-card-content>
+			<form
+				[formGroup]="form"
+				(ngSubmit)="agregarEditarVacuna()">
+				<mat-grid-list
+					cols="2"
+					rowHeight="5rem">
+					<mat-grid-tile>
+						<mat-form-field appearance="outline">
+							<mat-label>Nombre</mat-label>
+							<input
+								formControlName="nombre"
+								autocomplete="off"
+								matInput />
+						</mat-form-field>
+					</mat-grid-tile>
+					<mat-grid-tile>
+						<mat-form-field appearance="outline">
+							<mat-label>Cantidad de Dosis</mat-label>
+							<input
+								formControlName="cantidadDosis"
+								autocomplete="off"
+								matInput />
+						</mat-form-field>
+					</mat-grid-tile>
+
+		<mat-grid-tile>
+						<mat-form-field color="primary">
+							<mat-label>Fecha de la colocación</mat-label>
+							<input
+								matInput
+								formControlName="fechaAplicacion"
+								[matDatepicker]="picker1" />
+							<mat-hint>MM/DD/YYYY</mat-hint>
+							<mat-datepicker-toggle
+								matIconSuffix
+								[for]="picker1"></mat-datepicker-toggle>
+							<mat-datepicker
+								touchUi
+								#picker1></mat-datepicker>
+						</mat-form-field>
+					</mat-grid-tile>
+
+					<mat-grid-tile>
+						<mat-form-field color="primary">
+							<mat-label>Fecha de la próxima colocación</mat-label>
+							<input
+								matInput
+											formControlName="fechaProximaAplicacion"
+								[matDatepicker]="picker2" />
+							<mat-hint>MM/DD/YYYY</mat-hint>
+							<mat-datepicker-toggle
+								matIconSuffix
+								[for]="picker2"></mat-datepicker-toggle>
+							<mat-datepicker
+								touchUi
+								#picker2></mat-datepicker>
+						</mat-form-field>
+					</mat-grid-tile>
+					<mat-grid-tile
+						class="container-btn"
+						[colspan]="2">
+						<button
+							mat-raised-button
+							routerLink="/mascotas"
+							color="basic"
+							class="btn-agregar">
+							Volver
+						</button>
+						<button
+							mat-raised-button
+							[disabled]="form.invalid"
+							type="submit"
+							color="primary"
+							class="btn-agregar">
+							Guardar
+						</button>
+					</mat-grid-tile>
+				</mat-grid-list>
+			</form>
+		</mat-card-content>
+	</mat-card>
+</div>

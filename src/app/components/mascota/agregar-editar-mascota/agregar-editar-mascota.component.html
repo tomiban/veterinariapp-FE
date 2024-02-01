@@ -1,7 +1,7 @@
 <div
 	class="title"
 	[ngStyle]="{ 'background-color': isVerMascota && '#6d42ba' }">
-	<h1>Agregar Paciente</h1>
+	<h1>{{ titulo }} Mascota</h1>
 </div>
 @if (loading) {
 <mat-progress-bar
@@ -14,15 +14,26 @@
 			<mat-card-subtitle> Datos de la mascota </mat-card-subtitle>
 		</mat-card-header>
 		<mat-card-content>
-			<form [formGroup]="form" (ngSubmit)="agregarMascota()">
+			<form
+				[formGroup]="form"
+				(ngSubmit)="agregarEditarMascota()">
 				<mat-grid-list
 					cols="2"
 					rowHeight="5rem">
-					<mat-grid-tile [colspan]="2">
+					<mat-grid-tile>
 						<mat-form-field appearance="outline">
 							<mat-label>Nombre</mat-label>
 							<input
-              formControlName="nombre"
+								formControlName="nombre"
+								autocomplete="off"
+								matInput />
+						</mat-form-field>
+					</mat-grid-tile>
+					<mat-grid-tile>
+						<mat-form-field appearance="outline">
+							<mat-label>Especie</mat-label>
+							<input
+								formControlName="especie"
 								autocomplete="off"
 								matInput />
 						</mat-form-field>
@@ -31,7 +42,7 @@
 						><mat-form-field appearance="outline">
 							<mat-label>Color</mat-label>
 							<input
-              formControlName="color"
+								formControlName="color"
 								autocomplete="off"
 								matInput /> </mat-form-field
 					></mat-grid-tile>
@@ -39,7 +50,7 @@
 						><mat-form-field appearance="outline">
 							<mat-label>Raza</mat-label>
 							<input
-              formControlName="raza"
+								formControlName="raza"
 								autocomplete="off"
 								matInput /> </mat-form-field
 					></mat-grid-tile>
@@ -47,30 +58,35 @@
 						><mat-form-field appearance="outline">
 							<mat-label>Edad</mat-label>
 							<input
-              formControlName="edad"
+								formControlName="edad"
 								autocomplete="off"
 								matInput /> </mat-form-field
 					></mat-grid-tile>
+
 					<mat-grid-tile
 						><mat-form-field appearance="outline">
 							<mat-label>Peso</mat-label>
 							<input
-              formControlName="peso"
+								formControlName="peso"
 								autocomplete="off"
 								matInput /> </mat-form-field
 					></mat-grid-tile>
-					<mat-grid-tile class="container-btn" [colspan]="2">
-            <button
+
+					
+					<mat-grid-tile
+						class="container-btn"
+						[colspan]="2">
+						<button
 							mat-raised-button
-              routerLink="/mascotas"
+							routerLink="/mascotas"
 							color="basic"
 							class="btn-agregar">
 							Volver
 						</button>
 						<button
 							mat-raised-button
-              [disabled]="form.invalid"
-              type="submit"
+							[disabled]="form.invalid"
+							type="submit"
 							color="primary"
 							class="btn-agregar">
 							Guardar

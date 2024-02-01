@@ -1,0 +1,231 @@
+<div
+	class="title"
+	[ngStyle]="{ 'background-color': isVerMascota && '#6d42ba' }">
+	<h1>Mascota</h1>
+</div>
+@if (loading) {
+<mat-progress-bar
+	mode="indeterminate"
+	color="accent"></mat-progress-bar>
+}
+
+<!--  La variable mascota en as mascota contendrá el valor emitido por el Observable cuando esté disponible. -->
+<div class="container">
+	<button
+		mat-raised-button
+		routerLink="/animales">
+		Volver
+	</button>
+	<div class="grid-container">
+		@if (mascota$ | async; as mascota; ) {
+		<mat-card class="card">
+			<mat-card-title class="card-title">{{ mascota.nombre }}</mat-card-title>
+
+			<mat-card-content class="card-content">
+				<div class="image-column">
+					<!-- TODO: DETECTAR IMAGEN SEGUN MASCOTA -->
+					@if(mascota.especie) {
+					<img
+						mat-card-xl-image
+						[src]="obtenerRutaImagen(mascota.especie)" />
+					}
+				</div>
+				<div class="info-column">
+					<p><span class="card-subtitles">Color: </span> {{ mascota.color }}</p>
+					<p><span class="card-subtitles">Raza: </span> {{ mascota.raza }}</p>
+					<p><span class="card-subtitles">Edad: </span> {{ mascota.edad }}</p>
+					<p><span class="card-subtitles">Peso: </span>{{ mascota.peso }}kg</p>
+				</div>
+			</mat-card-content>
+		</mat-card>
+		<mat-card class="card">
+			<mat-card-title class="card-title">Tomás Banchio</mat-card-title>
+			<div class="toggle-container">
+				<mat-slide-toggle
+					class="toggle"
+					labelPosition="before"
+					(toggleChange)="handleToggle()"
+					>Falta Pagar?</mat-slide-toggle
+				>
+			</div>
+
+			<mat-card-content class="card-content">
+				<div class="info-column">
+					<p><span class="card-subtitles">Dni: </span> 40645068</p>
+					<p><span class="card-subtitles">Celular: </span> 3496547076</p>
+					<p>
+						<span class="card-subtitles">Domicilio: </span>
+						Gabarret 1824
+					</p>
+				</div>
+			</mat-card-content>
+			@if(deuda) {
+			<!-- Dialog para gestionar el monto + Boton con hover saldar -->
+			<div class="chip-container">
+				<span
+					class="custom-chip"
+					mat-raised-button
+					color="warn"
+					>Deuda</span
+				>
+			</div>
+			}
+		</mat-card>
+		}
+	</div>
+
+	<!-- Table con 2 tabs: Historia CLinica / Vacunas -->
+
+	<div class="mat-elevation-z8 list-mascota">
+		<table
+			mat-table
+			multiTemplateDataRows
+			[dataSource]="dataSource">
+			<!-- Position Column -->
+
+			@for (column of displayedColumns; track column) {
+			<ng-container matColumnDef="{{ column }}">
+				@if(column == 'acciones') {
+				<th
+					mat-header-cell
+					*matHeaderCellDef
+					class="btn-container">
+					<button
+						mat-raised-button
+						color="primary"
+						class="btn-primary"
+						routerLink="vacunas/agregar">
+						Agregar
+					</button>
+				</th>
+				<td
+					mat-cell
+					*matCellDef="let element">
+					<div class="btn-icons">
+						<mat-icon
+							#tooltip="matTooltip"
+							matTooltip="Editar"
+							fontIcon="edit"
+							class="edit"></mat-icon>
+
+						<mat-icon
+							#tooltip="matTooltip"
+							matTooltip="Borrar"
+							fontIcon="delete"
+							class="delete"></mat-icon>
+					</div>
+				</td>
+				} @else {
+				<th
+					mat-header-cell
+					*matHeaderCellDef>
+					{{ column }}
+				</th>
+				<td
+					mat-cell
+					*matCellDef="let element">
+					{{ element[column] }}
+				</td>
+				}
+			</ng-container>
+			}
+			<ng-container matColumnDef="expand">
+				<th
+					mat-header-cell
+					*matHeaderCellDef
+					aria-label="row actions">
+					&nbsp;
+				</th>
+				<td
+					mat-cell
+					*matCellDef="let element">
+					<button
+						mat-icon-button
+						aria-label="expand row"
+						(click)="
+							expandedElement = expandedElement === element ? null : element;
+							$event.stopPropagation()
+						">
+						@if (expandedElement === element) {
+						<mat-icon>keyboard_arrow_up</mat-icon>
+						} @else {
+						<mat-icon>keyboard_arrow_down</mat-icon>
+						}
+					</button>
+				</td>
+			</ng-container>
+
+			<!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+			<ng-container matColumnDef="expandedDetail">
+				<td
+					class="td-expanded"
+					mat-cell
+					*matCellDef="let element"
+					[attr.colspan]="columnsToDisplayWithExpand.length">
+					<div
+						class="expanded-detail"
+						[@detailExpand]="
+							element == expandedElement ? 'expanded' : 'collapsed'
+						">
+						<div
+							*ngFor="let el of element.Dosis; index as i"
+							class="dosis-item">
+							<div class="dosis-icon">
+								<mat-icon
+									#tooltip="matTooltip"
+									matTooltip="{{ i + 1 }}) Dosis"
+									fontIcon="vaccines"></mat-icon>
+							</div>
+
+							<div class="dosis-info">
+								<div class="info-details">
+									<p class="info-label">Fecha:</p>
+									<p class="info-value">
+										{{ el.fechaAplicacion | date : "dd/MM/yyyy" }}
+									</p>
+								</div>
+								<div class="info-details">
+									<p class="info-label">Fecha siguiente aplicación:</p>
+									<p class="info-value">
+										{{ el.fechaSiguienteAplicacion | date : "dd/MM/yyyy" }}
+									</p>
+								</div>
+							</div>
+							<div class="dosis-icon">
+								<mat-icon
+									#tooltip="matTooltip"
+									matTooltip="Borrar"
+									fontIcon="remove"
+									class="delete"></mat-icon>
+							</div>
+						</div>
+					</div>
+				</td>
+			</ng-container>
+
+			<tr
+				mat-header-row
+				*matHeaderRowDef="columnsToDisplayWithExpand"></tr>
+			<tr
+				mat-row
+				*matRowDef="let element; columns: columnsToDisplayWithExpand"
+				class="data-row"
+				[class.example-expanded-row]="expandedElement === element"
+				(click)="
+					expandedElement = expandedElement === element ? null : element
+				"></tr>
+			<tr
+				mat-row
+				*matRowDef="let row; columns: ['expandedDetail']"
+				class="expanded-row"></tr>
+
+			<!--  -->
+		</table>
+
+		<mat-paginator
+			[pageSizeOptions]="[5, 10, 20]"
+			showFirstLastButtons
+			aria-label="Vacunas por página">
+		</mat-paginator>
+	</div>
+</div>

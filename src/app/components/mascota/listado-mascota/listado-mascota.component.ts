@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core"
 import { RouterLink } from "@angular/router"
 import { MatTableDataSource, MatTableModule } from "@angular/material/table"
-import { Mascota } from "../../interfaces/mascota"
+import { Mascota } from "../../../interfaces/mascota"
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator"
 import { MatSort, MatSortModule } from "@angular/material/sort"
 import { MatInputModule } from "@angular/material/input"
@@ -10,9 +10,11 @@ import { MatIconModule } from "@angular/material/icon"
 import { MatTooltipModule } from "@angular/material/tooltip"
 import { MatButtonModule } from "@angular/material/button"
 import { MatProgressBarModule } from "@angular/material/progress-bar"
-import { MascotaService } from "../../services/mascota.service"
-import { SnackbarService } from "../../services/snackbar.service"
+import { MascotaService } from "../../../services/mascota.service"
+import { SnackbarService } from "../../../services/snackbar.service"
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar"
+import { capitalizeFirst } from "../../../utils/utils"
+import { EspecieAnimal } from "../../../constants/enums/especies.enum"
 
 @Component({
 	selector: "app-listado-mascota",
@@ -37,8 +39,9 @@ export class ListadoMascotaComponent implements OnInit {
 	displayedColumns: string[] = [
 		"nro",
 		"nombre",
-		"color",
+		"especie",
 		"raza",
+		"color",
 		"edad",
 		"peso",
 		"acciones",
@@ -73,7 +76,13 @@ export class ListadoMascotaComponent implements OnInit {
 		this._mascotaService.getMascotas().subscribe({
 			next: (data) => {
 				this.dataSource.data = data.map((mascota, index) => {
-					return { ...mascota, nro: index + 1 }
+					return {
+						...mascota,
+						especie: mascota.especie
+							? (capitalizeFirst(mascota.especie) as EspecieAnimal)
+							: undefined,
+						nro: index + 1,
+					}
 				})
 
 				this.dataSource.paginator = this.paginator
@@ -90,15 +99,15 @@ export class ListadoMascotaComponent implements OnInit {
 		})
 	}
 
-	
-
-	 eliminarMascota(event: MouseEvent, id: number) {
+	eliminarMascota(event: MouseEvent, id: number) {
 		this.loading = true
 		event.stopPropagation()
 
 		this._mascotaService.deleteMascota(id).subscribe({
 			next: () => {
-				this._notificacionService.mostrarMensajeExitoso("¡Mascota eliminada con éxito!")
+				this._notificacionService.mostrarMensajeExitoso(
+					"¡Mascota eliminada con éxito!"
+				)
 				this.obtenerMascotas()
 			},
 			error: (error) => {
@@ -108,5 +117,5 @@ export class ListadoMascotaComponent implements OnInit {
 				this.loading = false
 			},
 		})
-	} 
+	}
 }

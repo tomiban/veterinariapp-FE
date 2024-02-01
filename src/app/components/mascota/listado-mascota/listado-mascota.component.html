@@ -1,0 +1,177 @@
+<div class="title">
+	<h1>Mis Pacientes 🐶</h1>
+</div>
+@if (loading) {
+<mat-progress-bar
+	mode="indeterminate"
+	color="accent"></mat-progress-bar>
+} 
+
+<div class="container">
+	<div class="">
+		<mat-form-field>
+			<mat-label>Filtro</mat-label>
+			<input
+				matInput
+				(keyup)="applyFilter($event)"
+				placeholder="Buscar..."
+				autocomplete="off"
+				#input />
+		</mat-form-field>
+		<div class="mat-elevation-z0">
+			<table
+				mat-table
+				[dataSource]="dataSource"
+				matSort>
+				<!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+
+				<!-- Position Column -->
+				<ng-container matColumnDef="nro">
+					<th
+						mat-header-cell
+						*matHeaderCellDef
+						mat-sort-header>
+						Nro.
+					</th>
+					<td
+						mat-cell
+						*matCellDef="let element">
+						{{ element.nro }}
+					</td>
+				</ng-container>
+
+				<ng-container matColumnDef="nombre">
+					<th
+						mat-header-cell
+						*matHeaderCellDef
+						mat-sort-header>
+						Nombre
+					</th>
+					<td
+						mat-cell
+						*matCellDef="let element">
+						{{ element.nombre }}
+					</td>
+				</ng-container>
+
+				<ng-container matColumnDef="especie">
+					<th
+						mat-header-cell
+						*matHeaderCellDef
+						mat-sort-header>
+						Especie
+					</th>
+					<td
+						mat-cell
+						*matCellDef="let element">
+						{{ element.especie }}
+					</td>
+				</ng-container>
+
+				<ng-container matColumnDef="raza">
+					<th
+						mat-header-cell
+						*matHeaderCellDef
+						mat-sort-header>
+						Raza
+					</th>
+					<td
+						mat-cell
+						*matCellDef="let element">
+						{{ element.raza }}
+					</td>
+				</ng-container>
+
+				<ng-container matColumnDef="color">
+					<th
+						mat-header-cell
+						*matHeaderCellDef
+						mat-sort-header>
+						Color
+					</th>
+					<td
+						mat-cell
+						*matCellDef="let element">
+						{{ element.color }}
+					</td>
+				</ng-container>
+
+				<ng-container matColumnDef="edad">
+					<th
+						mat-header-cell
+						*matHeaderCellDef
+						mat-sort-header>
+						Edad
+					</th>
+					<td
+						mat-cell
+						*matCellDef="let element">
+						{{ element.edad }}
+					</td>
+				</ng-container>
+
+				<ng-container matColumnDef="peso">
+					<th
+						mat-header-cell
+						*matHeaderCellDef
+						mat-sort-header>
+						Peso
+					</th>
+					<td
+						mat-cell
+						*matCellDef="let element">
+						{{ element.peso }}
+					</td>
+				</ng-container>
+
+				<ng-container matColumnDef="acciones">
+					<th
+						mat-header-cell
+						*matHeaderCellDef>
+						<button
+							mat-raised-button
+							color="primary"
+							class="btn-primary"
+							routerLink="agregar">
+							Agregar
+						</button>
+					</th>
+					<td
+						mat-cell
+						*matCellDef="let element">
+						<div class="btn-icons">
+							<mat-icon
+								routerLink="editar/{{ element.id }}"
+								#tooltip="matTooltip"
+								matTooltip="Editar"
+								fontIcon="edit"
+								class="edit"></mat-icon>
+
+							<mat-icon
+								#tooltip="matTooltip"
+								matTooltip="Borrar"
+								(click)="eliminarMascota($event, element.id)"
+								fontIcon="delete"
+								class="delete"></mat-icon>
+						</div>
+					</td>
+				</ng-container>
+
+				<tr
+					mat-header-row
+					*matHeaderRowDef="displayedColumns"></tr>
+				<tr
+					mat-row
+					routerLink="{{ element.id }}"
+					*matRowDef="let element; columns: displayedColumns"></tr>
+			</table>
+			<mat-paginator
+				[pageSize]="10"
+				[pageSizeOptions]="[5, 10, 20]"
+				showFirstLastButtons
+				aria-label="Select page of periodic elements">
+			</mat-paginator>
+		</div>
+	</div>
+</div>
