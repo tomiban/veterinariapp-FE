@@ -13,7 +13,7 @@ import { MatTabsModule } from "@angular/material/tabs"
 import { MatTableDataSource, MatTableModule } from "@angular/material/table"
 import { MatInputModule } from "@angular/material/input"
 import { MatFormFieldModule } from "@angular/material/form-field"
-import { EspecieAnimal } from "../../../constants/enums/especies.enum"
+import { Especie } from "../../../constants/enums/especies.enum"
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator"
 import { Vacuna } from "../../../interfaces/vacunas"
 import { MatIconModule } from "@angular/material/icon"
@@ -117,13 +117,13 @@ export class VerMascotaComponent implements OnInit {
 	obtenerRutaImagen(especie: string): string {
 		// Lógica para determinar la ruta de la imagen según el tipo de mascota
 		switch (especie) {
-			case EspecieAnimal.GATO:
+			case Especie.GATO:
 				return "../../../assets/img/cat.png"
-			case EspecieAnimal.PERRO:
+			case Especie.PERRO:
 				return "../../../assets/img/dog.png"
-			case EspecieAnimal.ROEDOR:
+			case Especie.ROEDOR:
 				return "../../../assets/img/squirrel.png"
-			case EspecieAnimal.CONEJO:
+			case Especie.CONEJO:
 				return "../../../assets/img/rabbit.png"
 			// Agrega más casos según sea necesario
 			default:

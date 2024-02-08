@@ -1,6 +1,6 @@
 // especies.enum.ts
 
-export enum EspecieAnimal {
+export enum Especie {
 	GATO = "GATO",
 	PERRO = "PERRO",
 	ROEDOR = "ROEDOR",

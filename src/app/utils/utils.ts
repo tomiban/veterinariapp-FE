@@ -1,4 +1,4 @@
-import { EspecieAnimal } from "../constants/enums/especies.enum"
+import { Especie } from "../constants/enums/especies.enum"
 
 export const capitalizeFirst = (especie:string) => {
 	return especie[0].toUpperCase() + especie.slice(1).toLowerCase()
@@ -6,16 +6,16 @@ export const capitalizeFirst = (especie:string) => {
 
 export function obtenerEspecieDesdeString(
 	especieString: string
-): EspecieAnimal | undefined {
+): Especie | undefined {
 	const especieEnumKeys = Object.keys(
-		EspecieAnimal
-	) as (keyof typeof EspecieAnimal)[]
+		Especie
+	) as (keyof typeof Especie)[]
 	const indice = especieEnumKeys.findIndex(
-		(key) => EspecieAnimal[key] === especieString.toUpperCase()
+		(key) => Especie[key] === especieString.toUpperCase()
 	)
 
 	if (indice !== -1) {
-		return EspecieAnimal[especieEnumKeys[indice]]
+		return Especie[especieEnumKeys[indice]]
 	}
 
 	return undefined

@@ -22,7 +22,7 @@ import {
 	capitalizeFirst,
 	obtenerEspecieDesdeString,
 } from "../../../utils/utils"
-import { EspecieAnimal } from "../../../constants/enums/especies.enum"
+import { Sexo } from "../../../constants/enums/sexo.enum"
 
 @Component({
 	selector: "app-agregar-editar-mascota",
@@ -61,6 +61,7 @@ export class AgregarEditarMascotaComponent implements OnInit {
 		this.form = this.fb.group({
 			nombre: ["", Validators.required],
 			especie: ["", Validators.required],
+			sexo: ["", Validators.required],
 			color: ["", Validators.required],
 			raza: ["", Validators.required],
 			edad: ["", Validators.required, Validators.pattern(/^[0-9]+$/)],
@@ -82,6 +83,7 @@ export class AgregarEditarMascotaComponent implements OnInit {
 				this.form.setValue({
 					nombre: data.nombre,
 					especie: data.especie ? capitalizeFirst(data.especie) : undefined,
+					sexo: data.sexo,
 					color: data.color,
 					raza: data.raza,
 					peso: data.peso,
@@ -127,15 +129,14 @@ export class AgregarEditarMascotaComponent implements OnInit {
 	}
 
 	agregarEditarMascota() {
-
-
-		const { nombre, especie, color, raza, peso, edad } = this.form.value
+		const { nombre, especie, color, raza, peso, edad, sexo } = this.form.value
 
 		const especieEnum = obtenerEspecieDesdeString(especie)
 
 		const mascota: Mascota = {
 			nombre,
 			especie: especieEnum,
+			sexo,
 			color,
 			raza,
 			edad,

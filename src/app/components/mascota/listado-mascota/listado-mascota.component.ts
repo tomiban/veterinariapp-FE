@@ -14,7 +14,7 @@ import { MascotaService } from "../../../services/mascota.service"
 import { SnackbarService } from "../../../services/snackbar.service"
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar"
 import { capitalizeFirst } from "../../../utils/utils"
-import { EspecieAnimal } from "../../../constants/enums/especies.enum"
+import { Especie } from "../../../constants/enums/especies.enum"
 
 @Component({
 	selector: "app-listado-mascota",
@@ -39,7 +39,8 @@ export class ListadoMascotaComponent implements OnInit {
 	displayedColumns: string[] = [
 		"nro",
 		"nombre",
-		"especie",
+    "especie",
+    "sexo",
 		"raza",
 		"color",
 		"edad",
@@ -79,7 +80,7 @@ export class ListadoMascotaComponent implements OnInit {
 					return {
 						...mascota,
 						especie: mascota.especie
-							? (capitalizeFirst(mascota.especie) as EspecieAnimal)
+							? (capitalizeFirst(mascota.especie) as Especie)
 							: undefined,
 						nro: index + 1,
 					}
