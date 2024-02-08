@@ -1,8 +1,8 @@
 // especies.enum.ts
 
 export enum Especie {
-	GATO = "GATO",
-	PERRO = "PERRO",
-	ROEDOR = "ROEDOR",
-	CONEJO = "CONEJO",
+	GATO = "Gato",
+	PERRO = "Perro",
+	ROEDOR = "Roedor",
+	CONEJO = "Conejo",
 }

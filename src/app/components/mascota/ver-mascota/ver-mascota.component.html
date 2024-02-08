@@ -19,7 +19,22 @@
 	<div class="grid-container">
 		@if (mascota$ | async; as mascota; ) {
 		<mat-card class="card">
-			<mat-card-title class="card-title">{{ mascota.nombre }}</mat-card-title>
+			<mat-card-title class="card-title"
+				><p>{{ mascota.nombre }}</p>
+				<span>
+					@if(mascota.sexo == 'Macho') {
+					<img
+						class="sexSymbol-icon"
+						[src]="obtenerRutaImagen(mascota.sexo)"
+						alt="" />
+					} @else{
+					<img
+						class="sexSymbol-icon"
+						[src]="obtenerRutaImagen(mascota.sexo)"
+						alt="" />
+					}
+				</span></mat-card-title
+			>
 
 			<mat-card-content class="card-content">
 				<div class="image-column">

@@ -22,6 +22,7 @@ import { VacunaService } from "../../../services/vacuna.service"
 import { animate, state, style, transition, trigger } from "@angular/animations"
 import { DosisService } from "../../../services/dosis.service"
 import { SnackbarService } from "../../../services/snackbar.service"
+import { Sexo } from "../../../constants/enums/sexo.enum"
 
 @Component({
 	selector: "app-ver-mascota",
@@ -114,9 +115,12 @@ export class VerMascotaComponent implements OnInit {
 		this.deuda = !this.deuda
 	}
 
-	obtenerRutaImagen(especie: string): string {
-		// Lógica para determinar la ruta de la imagen según el tipo de mascota
-		switch (especie) {
+	// Implementación de la función
+	obtenerRutaImagen(parametro: Especie | Sexo): string {
+		// Lógica para determinar la ruta de la imagen según el tipo de mascota o sexo
+		console.log(parametro)
+
+		switch (parametro) {
 			case Especie.GATO:
 				return "../../../assets/img/cat.png"
 			case Especie.PERRO:
@@ -125,9 +129,12 @@ export class VerMascotaComponent implements OnInit {
 				return "../../../assets/img/squirrel.png"
 			case Especie.CONEJO:
 				return "../../../assets/img/rabbit.png"
-			// Agrega más casos según sea necesario
+			case Sexo.MACHO:
+				return "../../../assets/img/male-symbol.png"
+			case Sexo.HEMBRA:
+				return "../../../assets/img/female-symbol.png"
 			default:
-				return "../../../assets/img/dog.png" // Puedes establecer una imagen predeterminada o una ruta vacía si no hay coincidencia
+				return "../../../assets/img/dog.png" // Imagen predeterminada o ruta vacía si no hay coincidencia
 		}
 	}
 

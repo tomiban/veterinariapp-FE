@@ -11,8 +11,24 @@
 
 .card-title {
 	font-size: 2rem;
-	grid-column: 1 / -1; /* Ocupar todas las columnas disponibles */
-	text-align: center;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+}
+
+.card-title > p {
+	flex: 1;
+
+	margin: 0 18%;
+}
+
+.card-title > span {
+	align-self: self-end;
+}
+
+.sexSymbol-icon {
+	width: 30px;
+	object-fit: contain;
 }
 
 .card-content {
@@ -194,49 +210,49 @@ tr.data-row td {
 }
 
 .expanded-detail {
-    overflow: hidden;
-    transition: box-shadow 0.3s ease-in-out;
-    padding: 0 5vw; /* Utilizamos porcentaje relativo al ancho de la pantalla */
+	overflow: hidden;
+	transition: box-shadow 0.3s ease-in-out;
+	padding: 0 5vw; /* Utilizamos porcentaje relativo al ancho de la pantalla */
 }
 
 .dosis-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 2vw; /* Utilizamos un valor relativo */
-    margin-top: 2vw; /* Utilizamos porcentaje relativo al ancho de la pantalla */
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 2vw; /* Utilizamos un valor relativo */
+	margin-top: 2vw; /* Utilizamos porcentaje relativo al ancho de la pantalla */
 }
 
 .dosis-info {
-    font-size: 0.8rem; /* Utilizamos porcentaje relativo al ancho de la pantalla */
-    display: flex;
-    gap: 11vw; /* Utilizamos un valor relativo */
+	font-size: 0.8rem; /* Utilizamos porcentaje relativo al ancho de la pantalla */
+	display: flex;
+	gap: 11vw; /* Utilizamos un valor relativo */
 }
 
 .info-details {
-    display: flex;
-    gap: 3vw; /* Utilizamos un valor relativo */
+	display: flex;
+	gap: 3vw; /* Utilizamos un valor relativo */
 }
 
 .info-label {
-    font-weight: bold;
-    color: #333;
+	font-weight: bold;
+	color: #333;
 }
 
 .info-value {
-    font-style: italic;
-    color: #555;
+	font-style: italic;
+	color: #555;
 }
 
 .dosis-icon {
-    width: 5vw; /* Utilizamos porcentaje relativo al ancho de la pantalla */
-    cursor: pointer;
+	width: 5vw; /* Utilizamos porcentaje relativo al ancho de la pantalla */
+	cursor: pointer;
 }
 
 .completa {
-    color: darkgreen;
+	color: darkgreen;
 }
 
 .incompleta {
-    color: crimson;
+	color: crimson;
 }

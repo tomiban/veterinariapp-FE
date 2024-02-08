@@ -1,4 +1,4 @@
-import { AsyncPipe, CommonModule, NgStyle } from "@angular/common"
+import { AsyncPipe, NgStyle } from "@angular/common"
 import { Component, OnInit } from "@angular/core"
 import { MatCardModule } from "@angular/material/card"
 import { MatProgressBarModule } from "@angular/material/progress-bar"
@@ -18,10 +18,6 @@ import {
 import { Mascota } from "../../../interfaces/mascota"
 import { MascotaService } from "../../../services/mascota.service"
 import { SnackbarService } from "../../../services/snackbar.service"
-import {
-	capitalizeFirst,
-	obtenerEspecieDesdeString,
-} from "../../../utils/utils"
 import { MatSelectModule } from "@angular/material/select"
 import { SelectSexo } from "../../../interfaces/selectSexo"
 
@@ -92,7 +88,7 @@ export class AgregarEditarMascotaComponent implements OnInit {
 			next: (data: Mascota) => {
 				this.form.setValue({
 					nombre: data.nombre,
-					especie: data.especie ? capitalizeFirst(data.especie) : undefined,
+					especie: data.especie,
 					sexo: data.sexo,
 					color: data.color,
 					raza: data.raza,
@@ -140,11 +136,9 @@ export class AgregarEditarMascotaComponent implements OnInit {
 	agregarEditarMascota() {
 		const { nombre, especie, color, raza, peso, edad, sexo } = this.form.value
 
-		const especieEnum = obtenerEspecieDesdeString(especie)
-
 		const mascota: Mascota = {
 			nombre,
-			especie: especieEnum,
+			especie,
 			sexo,
 			color,
 			raza,
