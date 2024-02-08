@@ -1,31 +1,41 @@
+/* agregar-editar-vacuna.component.css */
+
 mat-card {
-	width: 100%;
-	margin-top: 3rem;
-}
-mat-card-content {
-	margin-top: 15px;
+  width: 100%;
+  margin-top: 3rem;
 }
 
+mat-card-content {
+  margin: 10px 0;
+}
+
+
 mat-grid-tile {
-	padding: 10px 0 0 10px;
+  padding: 20px 0;
 }
 
 form {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 mat-form-field {
-	width: 100%;
-	margin-right: 20px;
+  width: 100%;
+  margin-right: 20px;
 }
 
-.container-btn {
-	display: flex;
-	justify-content: space-between;
+.dosis-title {
+  padding: 20px 0 0 0 !important;
+}
+.dose-number {
+  font-weight: semibold;
+  margin-right: 10px;
+  color: rgb(65, 64, 64);
 }
 
-.btn-agregar {
-	margin-right: 10px; /* Ajusta el margen entre los botones según tus preferencias */
+.btn {
+  margin-right: 10px;
 }
+
+

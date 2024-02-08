@@ -81,8 +81,6 @@
 			mat-table
 			multiTemplateDataRows
 			[dataSource]="dataSource">
-			<!-- Position Column -->
-
 			@for (column of displayedColumns; track column) {
 			<ng-container matColumnDef="{{ column }}">
 				@if(column == 'acciones') {
@@ -102,18 +100,54 @@
 					mat-cell
 					*matCellDef="let element">
 					<div class="btn-icons">
-						<mat-icon
-							#tooltip="matTooltip"
-							matTooltip="Editar"
-							fontIcon="edit"
-							class="edit"></mat-icon>
-
-						<mat-icon
-							#tooltip="matTooltip"
-							matTooltip="Borrar"
-							fontIcon="delete"
-							class="delete"></mat-icon>
+						<button
+							class="add"
+							routerLink="vacunas/{{ element.id }}/dosis"
+							[disabled]="element.Dosis.length === element.Cantidad">
+							<mat-icon
+								#tooltip="matTooltip"
+								matTooltip="Añadir dosis"
+								fontIcon="add"
+								class=""></mat-icon>
+						</button>
+						<button routerLink="vacunas/{{ element.id }}/editar">
+							<mat-icon
+								#tooltip="matTooltip"
+								matTooltip="Editar vacuna"
+								fontIcon="edit"
+								class="edit"></mat-icon>
+						</button>
+						<button (click)="removerVacuna(element.id)">
+							<mat-icon
+								#tooltip="matTooltip"
+								matTooltip="Borrar vacuna"
+								fontIcon="delete"
+								class="delete"></mat-icon>
+						</button>
 					</div>
+				</td>
+				} @else if (column == 'Completada') {
+				<th
+					mat-header-cell
+					*matHeaderCellDef>
+					{{ column }}
+				</th>
+				<td
+					mat-cell
+					*matCellDef="let element">
+					@if(element.Completada ) {
+					<mat-icon
+						class="completa"
+						#tooltip="matTooltip"
+						matTooltip="Completa"
+						fontIcon="verified"></mat-icon>
+					} @else {
+					<mat-icon
+						class="incompleta"
+						#tooltip="matTooltip"
+						matTooltip="Incompleta"
+						fontIcon="cancel"></mat-icon>
+					}
 				</td>
 				} @else {
 				<th
@@ -128,6 +162,7 @@
 				</td>
 				}
 			</ng-container>
+
 			}
 			<ng-container matColumnDef="expand">
 				<th
@@ -136,6 +171,7 @@
 					aria-label="row actions">
 					&nbsp;
 				</th>
+
 				<td
 					mat-cell
 					*matCellDef="let element">
@@ -173,7 +209,7 @@
 							<div class="dosis-icon">
 								<mat-icon
 									#tooltip="matTooltip"
-									matTooltip="{{ i + 1 }}) Dosis"
+									matTooltip="{{ i + 1 }}° Dosis"
 									fontIcon="vaccines"></mat-icon>
 							</div>
 
@@ -184,17 +220,20 @@
 										{{ el.fechaAplicacion | date : "dd/MM/yyyy" }}
 									</p>
 								</div>
+
 								<div class="info-details">
 									<p class="info-label">Fecha siguiente aplicación:</p>
 									<p class="info-value">
-										{{ el.fechaSiguienteAplicacion | date : "dd/MM/yyyy" }}
+										{{ el.fechaProximaAplicacion | date : "dd/MM/yyyy" }}
 									</p>
 								</div>
 							</div>
-							<div class="dosis-icon">
+							<div
+								class="dosis-icon"
+								(click)="removerDosis(el.id, expandedElement?.id)">
 								<mat-icon
 									#tooltip="matTooltip"
-									matTooltip="Borrar"
+									matTooltip="Remover dosis"
 									fontIcon="remove"
 									class="delete"></mat-icon>
 							</div>

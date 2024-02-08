@@ -8,10 +8,18 @@ export const routes: Routes = [
 	{ path: "", redirectTo: "mascotas", pathMatch: "full" },
 	{ path: "mascotas", component: ListadoMascotaComponent },
 	{ path: "mascotas/agregar", component: AgregarEditarMascotaComponent },
-	{ path: "mascotas/:id", component: VerMascotaComponent },
-	{ path: "mascotas/editar/:id", component: AgregarEditarMascotaComponent },
+	{ path: "mascotas/:idMascota", component: VerMascotaComponent },
+	{ path: "mascotas/editar/:idMascota", component: AgregarEditarMascotaComponent },
 	{
-		path: "mascotas/:id/vacunas/agregar",
+		path: "mascotas/:idMascota/vacunas/agregar",
+		component: AgregarEditarVacunaComponent,
+	},
+	{
+		path: "mascotas/:idMascota/vacunas/:idVacuna/editar",
+		component: AgregarEditarVacunaComponent,
+  },
+  {
+		path: "mascotas/:idMascota/vacunas/:idVacuna/dosis",
 		component: AgregarEditarVacunaComponent,
 	},
 	{ path: "**", redirectTo: "mascotas", pathMatch: "full" },

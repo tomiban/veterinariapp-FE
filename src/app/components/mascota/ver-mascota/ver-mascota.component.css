@@ -98,7 +98,8 @@ table {
 
 td,
 th {
-	width: 20%;
+	width: 25%;
+	text-align: center;
 }
 
 /* Aplica el efecto hover a todas las filas excepto la primera */
@@ -115,6 +116,32 @@ tr.data-row:not(.expanded-row):active td {
 	color: black; /* Cambia al color de texto deseado */
 }
 
+button {
+	border: 0;
+	background: none;
+	cursor: pointer;
+}
+
+button[disabled] {
+	opacity: 0.6; /* Cambia la opacidad para indicar que está deshabilitado */
+	cursor: not-allowed; /* Cambia el cursor para indicar que no se puede hacer clic */
+	/* Agrega otros estilos de acuerdo a tus necesidades */
+	background: none;
+}
+
+.add {
+	color: #1470c6;
+	transition: all 200ms; /* Modificado para agrupar la propiedad transition */
+	margin-right: 0.5rem;
+	transform: scale(1.2);
+}
+
+/* Estilos cuando el botón no está deshabilitado y se hace hover */
+.add:not(:disabled):hover {
+	color: #0053a0;
+	transform: scale(1.4);
+}
+
 .delete {
 	color: #4f5b66;
 	transition: all;
@@ -128,7 +155,7 @@ tr.data-row:not(.expanded-row):active td {
 
 .edit {
 	color: #f8cf05;
-	margin-right: 1rem;
+	margin-right: 0.5rem;
 	transition: all;
 	transition-duration: 200ms;
 }
@@ -147,7 +174,6 @@ tr.data-row:not(.expanded-row):active td {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	cursor: pointer;
 }
 
 .btn-container {
@@ -168,44 +194,49 @@ tr.data-row td {
 }
 
 .expanded-detail {
-	overflow: hidden;
-	transition: box-shadow 0.3s ease-in-out;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease-in-out;
+    padding: 0 5vw; /* Utilizamos porcentaje relativo al ancho de la pantalla */
 }
+
 .dosis-item {
-  display: grid;
-  align-items: center;
-  grid-template-columns: max-content 1fr max-content; /* Icono de vacuna, información, botón de remover */
-  gap: 10px; /* Espacio entre las columnas */
-  margin-top: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2vw; /* Utilizamos un valor relativo */
+    margin-top: 2vw; /* Utilizamos porcentaje relativo al ancho de la pantalla */
 }
 
 .dosis-info {
-  display: flex;
-  font-size: 0.8rem;
-	margin-left: 11rem;
-	gap: 6.5rem;
+    font-size: 0.8rem; /* Utilizamos porcentaje relativo al ancho de la pantalla */
+    display: flex;
+    gap: 11vw; /* Utilizamos un valor relativo */
 }
 
 .info-details {
-  display: flex; 
+    display: flex;
+    gap: 3vw; /* Utilizamos un valor relativo */
 }
 
 .info-label {
-  font-weight: bold;
-  color: #333;
-	margin-right: 10px;
+    font-weight: bold;
+    color: #333;
 }
 
 .info-value {
-  font-style: italic;
-  color: #555;
+    font-style: italic;
+    color: #555;
 }
 
 .dosis-icon {
-  margin-right: 12px;
+    width: 5vw; /* Utilizamos porcentaje relativo al ancho de la pantalla */
+    cursor: pointer;
 }
 
-.dosis-icon:last-child {
- padding-right: 30px; /* Elimina el margen derecho para el último elemento (botón de remover) */
-  justify-self: end; /* Alinea el botón de remover al final de la cuadrícula */
+.completa {
+    color: darkgreen;
+}
+
+.incompleta {
+    color: crimson;
 }

@@ -13,18 +13,39 @@ export class VacunaService {
 
 	constructor(private http: HttpClient) {}
 
-	getVacuna(id: number): Observable<Vacuna[]> {
+	getVacunas(idMascota: number): Observable<Vacuna[]> {
 		return this.http.get<Array<Vacuna>>(
-			`${this.myAppUrl}${this.myAPIUrl}${id}/vacunas`
+			`${this.myAppUrl}${this.myAPIUrl}${idMascota}/vacunas`
 		)
 	}
 
-	addVacuna(id: number, vacuna: Vacuna): Observable<Vacuna> {
+	getVacuna(idMascota: number, idVacuna: number): Observable<Vacuna> {
+		return this.http.get<Vacuna>(
+			`${this.myAppUrl}${this.myAPIUrl}${idMascota}/vacunas/${idVacuna}`
+		)
+	}
+
+	addVacuna(idMascota: number, vacuna: Vacuna): Observable<Vacuna> {
 		return this.http.post<Vacuna>(
-			`${this.myAppUrl}${this.myAPIUrl}${id}/vacunas`,
+			`${this.myAppUrl}${this.myAPIUrl}${idMascota}/vacunas`,
 			vacuna
 		)
 	}
 
-	
+	editVacuna(
+		idMascota: number,
+		idVacuna: number,
+		vacuna: Vacuna
+	): Observable<Vacuna> {
+		return this.http.put<Vacuna>(
+			`${this.myAppUrl}${this.myAPIUrl}${idMascota}/vacunas/${idVacuna}`,
+			vacuna
+		)
+	}
+
+	removeVacuna(idMascota: number, idVacuna: number): Observable<void> {
+		return this.http.delete<void>(
+			`${this.myAppUrl}${this.myAPIUrl}${idMascota}/vacunas/${idVacuna}`
+		)
+	}
 }

@@ -66,7 +66,7 @@ export class AgregarEditarMascotaComponent implements OnInit {
 			edad: ["", Validators.required, Validators.pattern(/^[0-9]+$/)],
 			peso: ["", [Validators.required, Validators.pattern(/^[0-9]+$/)]],
 		})
-		this.id = Number(this.aRoute.snapshot.paramMap.get("id"))
+		this.id = Number(this.aRoute.snapshot.paramMap.get("idMascota"))
 	}
 
 	ngOnInit(): void {
@@ -87,6 +87,7 @@ export class AgregarEditarMascotaComponent implements OnInit {
 					peso: data.peso,
 					edad: data.edad,
 				})
+				console.log(data)
 			},
 			error: () => {},
 			complete: () => {},
@@ -126,6 +127,8 @@ export class AgregarEditarMascotaComponent implements OnInit {
 	}
 
 	agregarEditarMascota() {
+
+
 		const { nombre, especie, color, raza, peso, edad } = this.form.value
 
 		const especieEnum = obtenerEspecieDesdeString(especie)

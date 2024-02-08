@@ -3,20 +3,196 @@
 	[ngStyle]="{ 'background-color': isVacuna && '#6d42ba' }">
 	<h1>{{ titulo }} Vacuna</h1>
 </div>
+
 @if (loading) {
 <mat-progress-bar
 	mode="indeterminate"
 	color="accent"></mat-progress-bar>
 }
+
 <div class="container">
-	<mat-card>
-		<mat-card-header>
+	<mat-card class="mat-elevation-z2">
+		<!-- Use a Material elevation class -->
+		<mat-card-header class="mat-primary">
+			<!-- Use Material color classes -->
 			<mat-card-subtitle> Datos de la vacuna </mat-card-subtitle>
 		</mat-card-header>
+
+		@if(esParaEditarVacuna) {
 		<mat-card-content>
 			<form
 				[formGroup]="form"
-				(ngSubmit)="agregarEditarVacuna()">
+				(ngSubmit)="submitForm($event)">
+				<mat-grid-list
+					cols="2"
+					rowHeight="3.5rem">
+					<mat-grid-tile>
+						<mat-form-field appearance="outline">
+							<mat-label>Nombre</mat-label>
+							<input
+								formControlName="nombre"
+								autocomplete="off"
+								matInput />
+						</mat-form-field>
+					</mat-grid-tile>
+
+					<mat-grid-tile>
+						<mat-form-field appearance="outline">
+							<mat-label>Cantidad de Dosis</mat-label>
+							<input
+								formControlName="cantidadDosis"
+								autocomplete="off"
+								matInput />
+						</mat-form-field>
+					</mat-grid-tile>
+				</mat-grid-list>
+				<mat-card-header class="mat-primary dosis-title">
+					<!-- Use Material color classes -->
+					<mat-card-subtitle> Dosis </mat-card-subtitle>
+				</mat-card-header>
+				<div
+					formArrayName="dosificaciones"
+					class="dosis-container">
+					<!-- Use Material typography classes -->
+					<div
+						*ngFor="let dosificacion of dosificaciones.controls; let i = index"
+						[formGroupName]="i"
+						class="form-group"
+						[ngClass]="{ 'current-dose': i === currentDoseIndex }">
+						<input
+							type="hidden"
+							formControlName="id" />
+						<mat-grid-list
+							cols="2"
+							rowHeight="5rem">
+							<mat-grid-tile>
+								<span class="dose-number">{{ i + 1 }}.</span>
+								<mat-form-field appearance="outline">
+									<mat-label for="fechaAplicacion">Fecha Aplicación:</mat-label>
+									<input
+										autocomplete="off"
+										matInput
+										type="text"
+										formControlName="fechaAplicacion"
+										[value]="
+											dosificacion.value.fechaAplicacion | date : 'MM/dd/yyyy'
+										" />
+								</mat-form-field>
+							</mat-grid-tile>
+							<mat-grid-tile>
+								<mat-form-field
+									mat-form-field
+									appearance="outline">
+									<mat-label for="fechaProximaAplicacion"
+										>Fecha Próxima Aplicación:</mat-label
+									>
+									<input
+										autocomplete="off"
+										matInput
+										type="text"
+										formControlName="fechaProximaAplicacion"
+										[value]="
+											dosificacion.value.fechaAplicacion | date : 'MM/dd/yyyy'
+										" />
+								</mat-form-field>
+							</mat-grid-tile>
+						</mat-grid-list>
+					</div>
+				</div>
+				<mat-grid-list
+					cols="2"
+					rowHeight="3.5rem">
+					<mat-grid-tile
+						class="container-btn"
+						[colspan]="2">
+						<button
+							mat-raised-button
+							(click)="volver($event)"
+							color="basic"
+							class="btn">
+							Volver
+						</button>
+						<button
+							mat-raised-button
+							[disabled]="form.invalid"
+							type="submit"
+							color="primary"
+							class="btn">
+							Actualizar
+						</button>
+					</mat-grid-tile>
+				</mat-grid-list>
+			</form>
+		</mat-card-content>
+		} @else if (esParaCrearDosis) {
+		<mat-card-content>
+			<form
+				[formGroup]="form"
+				(ngSubmit)="submitForm($event)">
+				<mat-grid-list
+					cols="2"
+					rowHeight="5rem">
+					<mat-grid-tile>
+						<mat-form-field color="primary">
+							<mat-label>Fecha de la colocación</mat-label>
+							<input
+								matInput
+								formControlName="fechaAplicacion"
+								[matDatepicker]="picker1" />
+							<mat-hint>MM/DD/YYYY</mat-hint>
+							<mat-datepicker-toggle
+								matIconSuffix
+								[for]="picker1"></mat-datepicker-toggle>
+							<mat-datepicker
+								touchUi
+								#picker1></mat-datepicker>
+						</mat-form-field>
+					</mat-grid-tile>
+
+					<mat-grid-tile>
+						<mat-form-field color="primary">
+							<mat-label>Fecha de la próxima colocación</mat-label>
+							<input
+								matInput
+								formControlName="fechaProximaAplicacion"
+								[matDatepicker]="picker2" />
+							<mat-hint>MM/DD/YYYY</mat-hint>
+							<mat-datepicker-toggle
+								matIconSuffix
+								[for]="picker2"></mat-datepicker-toggle>
+							<mat-datepicker
+								touchUi
+								#picker2></mat-datepicker>
+						</mat-form-field>
+					</mat-grid-tile>
+
+					<mat-grid-tile
+						class="container-btn"
+						[colspan]="2">
+						<button
+							mat-raised-button
+							(click)="volver($event)"
+							color="basic"
+							class="btn">
+							Volver
+						</button>
+						<button
+							mat-raised-button
+							[disabled]="form.invalid"
+							type="submit"
+							color="primary"
+							class="btn">
+							Guardar
+						</button>
+					</mat-grid-tile>
+				</mat-grid-list>
+			</form>
+		</mat-card-content>
+		} @else {
+		<mat-card-content>
+			<form
+				[formGroup]="form"
+				(ngSubmit)="submitForm($event)">
 				<mat-grid-list
 					cols="2"
 					rowHeight="5rem">
@@ -39,7 +215,7 @@
 						</mat-form-field>
 					</mat-grid-tile>
 
-		<mat-grid-tile>
+					<mat-grid-tile>
 						<mat-form-field color="primary">
 							<mat-label>Fecha de la colocación</mat-label>
 							<input
@@ -61,7 +237,7 @@
 							<mat-label>Fecha de la próxima colocación</mat-label>
 							<input
 								matInput
-											formControlName="fechaProximaAplicacion"
+								formControlName="fechaProximaAplicacion"
 								[matDatepicker]="picker2" />
 							<mat-hint>MM/DD/YYYY</mat-hint>
 							<mat-datepicker-toggle
@@ -72,14 +248,15 @@
 								#picker2></mat-datepicker>
 						</mat-form-field>
 					</mat-grid-tile>
+
 					<mat-grid-tile
 						class="container-btn"
 						[colspan]="2">
 						<button
 							mat-raised-button
-							routerLink="/mascotas"
+							(click)="volver($event)"
 							color="basic"
-							class="btn-agregar">
+							class="btn">
 							Volver
 						</button>
 						<button
@@ -87,12 +264,13 @@
 							[disabled]="form.invalid"
 							type="submit"
 							color="primary"
-							class="btn-agregar">
+							class="btn">
 							Guardar
 						</button>
 					</mat-grid-tile>
 				</mat-grid-list>
 			</form>
 		</mat-card-content>
+		}
 	</mat-card>
 </div>

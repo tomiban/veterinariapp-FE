@@ -20,6 +20,8 @@ import { MatIconModule } from "@angular/material/icon"
 import { MatTooltipModule } from "@angular/material/tooltip"
 import { VacunaService } from "../../../services/vacuna.service"
 import { animate, state, style, transition, trigger } from "@angular/animations"
+import { DosisService } from "../../../services/dosis.service"
+import { SnackbarService } from "../../../services/snackbar.service"
 
 @Component({
 	selector: "app-ver-mascota",
@@ -60,7 +62,9 @@ import { animate, state, style, transition, trigger } from "@angular/animations"
 export class VerMascotaComponent implements OnInit {
 	isVerMascota = true
 	loading: boolean = true
-	id: number
+	idMascota!: number
+	idVacuna!: number
+	idDosis!: number
 	mascota$!: Observable<Mascota>
 	deuda: boolean = false
 	expandedElement!: Vacuna | null
@@ -82,15 +86,15 @@ export class VerMascotaComponent implements OnInit {
 	constructor(
 		private _mascotaService: MascotaService,
 		private aRoute: ActivatedRoute,
-		private _vacunaService: VacunaService
+		private _vacunaService: VacunaService,
+		private _dosisService: DosisService,
+		private _sbService: SnackbarService
 	) {
-		this.id = Number(this.aRoute.snapshot.paramMap.get(`id`))
+		this.idMascota = Number(this.aRoute.snapshot.paramMap.get(`idMascota`))
+		this.mascota$ = this._mascotaService.getMascota(this.idMascota)
 	}
 
 	ngOnInit(): void {
-		this.obtenerVacunas(this.id)
-		this.mascota$ = this._mascotaService.getMascota(this.id)
-
 		this.mascota$.subscribe({
 			next: (mascota) => {
 				// Datos cargados con éxito, establecer loading en false
@@ -102,6 +106,8 @@ export class VerMascotaComponent implements OnInit {
 				this.loading = false
 			},
 		})
+
+		this.obtenerVacunas(this.idMascota)
 	}
 
 	handleToggle() {
@@ -125,9 +131,9 @@ export class VerMascotaComponent implements OnInit {
 		}
 	}
 
-	obtenerVacunas(id: number) {
+	obtenerVacunas(idMascota: number) {
 		this.loading = true
-		this._vacunaService.getVacuna(id).subscribe({
+		this._vacunaService.getVacunas(idMascota).subscribe({
 			next: (data) => {
 				this.dataSource.data = data.map((vacuna, index) => {
 					return {
@@ -135,7 +141,7 @@ export class VerMascotaComponent implements OnInit {
 						Nombre: vacuna.nombre,
 						Cantidad: vacuna.cantidadDosis,
 						Completada: vacuna.completada,
-						Id: vacuna.id,
+						id: vacuna.id as number,
 						Dosis: vacuna.dosificaciones,
 					}
 				})
@@ -149,5 +155,54 @@ export class VerMascotaComponent implements OnInit {
 				this.loading = false
 			},
 		})
+	}
+
+	removerVacuna(idVacuna: number) {
+		this.loading = true
+		this._vacunaService.removeVacuna(this.idMascota, idVacuna).subscribe({
+			next: (data) => {
+				this.loading = true
+			},
+			error: (err) => {
+				if (err) return console.log(err)
+			},
+			complete: () => {
+				this.loading = false
+				this.obtenerVacunas(this.idMascota)
+				this._sbService.mostrarMensajeExitoso("Vacuna eliminada con éxito!")
+			},
+		})
+	}
+
+	removerDosis(idDosis: number, idVacuna?: number) {
+		if (this.expandedElement) {
+			// Guarda el estado de la fila expandida actual
+			const filaExpandidaAnterior = this.expandedElement
+
+			this.loading = true
+			if (idVacuna && idDosis) {
+				this._dosisService
+					.removeDosis(this.idMascota, idVacuna, idDosis)
+					.subscribe({
+						next: () => {
+							// Restaura el estado de la fila expandida
+							this.expandedElement = filaExpandidaAnterior
+
+							// Maneja la respuesta exitosa
+							this.loading = false
+							// Vuelve a cargar las vacunas para reflejar los cambios
+							this.obtenerVacunas(this.idMascota)
+							this._sbService.mostrarMensajeExitoso(
+								"Dosis eliminadas con éxito!"
+							)
+						},
+						error: (err) => {
+							console.error(err)
+							// Manejar el error, si es necesario
+							this.loading = false
+						},
+					})
+			}
+		}
 	}
 }
