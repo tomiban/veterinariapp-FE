@@ -20,7 +20,7 @@
 				<mat-grid-list
 					cols="2"
 					rowHeight="5rem">
-					<mat-grid-tile 	colspan="2">
+					<mat-grid-tile colspan="2">
 						<mat-form-field appearance="outline">
 							<mat-label>Nombre</mat-label>
 							<input
@@ -29,6 +29,7 @@
 								matInput />
 						</mat-form-field>
 					</mat-grid-tile>
+
 					<mat-grid-tile>
 						<mat-form-field appearance="outline">
 							<mat-label>Especie</mat-label>
@@ -38,13 +39,20 @@
 								matInput />
 						</mat-form-field>
 					</mat-grid-tile>
+
 					<mat-grid-tile>
 						<mat-form-field appearance="outline">
 							<mat-label>Sexo</mat-label>
-							<input
+							<mat-select
 								formControlName="sexo"
-								autocomplete="off"
-								matInput />
+								[(ngModel)]="selectedValue"
+								name="sexo">
+								@for (sexo of sexos; track sexo) {
+								<mat-option [value]="sexo.value">{{
+									sexo.viewValue
+								}}</mat-option>
+								}
+							</mat-select>
 						</mat-form-field>
 					</mat-grid-tile>
 

@@ -1,4 +1,4 @@
-import { AsyncPipe, NgStyle } from "@angular/common"
+import { AsyncPipe, CommonModule, NgStyle } from "@angular/common"
 import { Component, OnInit } from "@angular/core"
 import { MatCardModule } from "@angular/material/card"
 import { MatProgressBarModule } from "@angular/material/progress-bar"
@@ -11,18 +11,19 @@ import { ActivatedRoute, Router, RouterLink } from "@angular/router"
 import {
 	FormBuilder,
 	FormGroup,
+	FormsModule,
 	ReactiveFormsModule,
 	Validators,
 } from "@angular/forms"
 import { Mascota } from "../../../interfaces/mascota"
 import { MascotaService } from "../../../services/mascota.service"
 import { SnackbarService } from "../../../services/snackbar.service"
-import { Observable } from "rxjs"
 import {
 	capitalizeFirst,
 	obtenerEspecieDesdeString,
 } from "../../../utils/utils"
-import { Sexo } from "../../../constants/enums/sexo.enum"
+import { MatSelectModule } from "@angular/material/select"
+import { SelectSexo } from "../../../interfaces/selectSexo"
 
 @Component({
 	selector: "app-agregar-editar-mascota",
@@ -34,11 +35,13 @@ import { Sexo } from "../../../constants/enums/sexo.enum"
 		MatGridListModule,
 		MatFormFieldModule,
 		MatInputModule,
+		MatSelectModule,
 		MatIconModule,
 		MatButtonModule,
 		RouterLink,
 		ReactiveFormsModule,
 		AsyncPipe,
+		FormsModule,
 	],
 	templateUrl: "./agregar-editar-mascota.component.html",
 	styleUrl: "./agregar-editar-mascota.component.css",
@@ -49,6 +52,12 @@ export class AgregarEditarMascotaComponent implements OnInit {
 	form: FormGroup
 	id: number
 	titulo: string
+	selectedValue!: string
+
+	sexos: SelectSexo[] = [
+		{ value: "Macho", viewValue: "Macho" },
+		{ value: "Hembra", viewValue: "Hembra" },
+	]
 
 	constructor(
 		private fb: FormBuilder,
@@ -58,10 +67,11 @@ export class AgregarEditarMascotaComponent implements OnInit {
 		private aRoute: ActivatedRoute
 	) {
 		this.titulo = "Registrar "
+
 		this.form = this.fb.group({
 			nombre: ["", Validators.required],
 			especie: ["", Validators.required],
-			sexo: ["", Validators.required],
+			sexo: ["Macho", Validators.required],
 			color: ["", Validators.required],
 			raza: ["", Validators.required],
 			edad: ["", Validators.required, Validators.pattern(/^[0-9]+$/)],
@@ -89,7 +99,6 @@ export class AgregarEditarMascotaComponent implements OnInit {
 					peso: data.peso,
 					edad: data.edad,
 				})
-				console.log(data)
 			},
 			error: () => {},
 			complete: () => {},
