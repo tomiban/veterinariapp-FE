@@ -54,7 +54,9 @@
 			</mat-card-content>
 		</mat-card>
 		<mat-card class="card">
-			<mat-card-title class="card-title">Tomás Banchio</mat-card-title>
+			<mat-card-title class="card-title">{{
+				mascota["dueño"]?.nombre
+			}}</mat-card-title>
 			<div class="toggle-container">
 				<mat-slide-toggle
 					class="toggle"
@@ -67,10 +69,13 @@
 			<mat-card-content class="card-content">
 				<div class="info-column">
 					<p><span class="card-subtitles">Dni: </span> 40645068</p>
-					<p><span class="card-subtitles">Celular: </span> 3496547076</p>
+					<p>
+						<span class="card-subtitles">Celular: </span>
+						{{ mascota["dueño"]?.telefono }}
+					</p>
 					<p>
 						<span class="card-subtitles">Domicilio: </span>
-						Gabarret 1824
+						{{ mascota["dueño"]?.domicilio }}
 					</p>
 				</div>
 			</mat-card-content>

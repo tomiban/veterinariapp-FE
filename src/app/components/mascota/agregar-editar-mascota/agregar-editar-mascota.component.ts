@@ -20,6 +20,7 @@ import { MascotaService } from "../../../services/mascota.service"
 import { SnackbarService } from "../../../services/snackbar.service"
 import { MatSelectModule } from "@angular/material/select"
 import { SelectSexo } from "../../../interfaces/selectSexo"
+import { Dueño } from "../../../interfaces/dueño"
 
 @Component({
 	selector: "app-agregar-editar-mascota",
@@ -70,8 +71,11 @@ export class AgregarEditarMascotaComponent implements OnInit {
 			sexo: ["Macho", Validators.required],
 			color: ["", Validators.required],
 			raza: ["", Validators.required],
-			edad: ["", Validators.required, Validators.pattern(/^[0-9]+$/)],
-			peso: ["", [Validators.required, Validators.pattern(/^[0-9]+$/)]],
+			edad: ["", Validators.required],
+			peso: ["", Validators.required],
+			nombreDueño: ["", Validators.required],
+			telefono: ["", Validators.required],
+			domicilio: ["", Validators.required],
 		})
 		this.id = Number(this.aRoute.snapshot.paramMap.get("idMascota"))
 	}
@@ -79,32 +83,49 @@ export class AgregarEditarMascotaComponent implements OnInit {
 	ngOnInit(): void {
 		if (this.id != 0) {
 			this.titulo = "Editar "
-			this.obtenerMascotas(this.id)
+			this.obtenerMascota(this.id)
 		}
 	}
 
-	obtenerMascotas(id: number) {
+	obtenerMascota(id: number) {
 		this._mascotaService.getMascota(id).subscribe({
-			next: (data: Mascota) => {
-				this.form.setValue({
-					nombre: data.nombre,
-					especie: data.especie,
-					sexo: data.sexo,
-					color: data.color,
-					raza: data.raza,
-					peso: data.peso,
-					edad: data.edad,
+			next: (mascota: Mascota) => {
+				console.log(mascota.dueño?.telefono)
+
+				this.form.patchValue({
+					nombre: mascota.nombre,
+					especie: mascota.especie,
+					sexo: mascota.sexo,
+					color: mascota.color,
+					raza: mascota.raza,
+					peso: mascota.peso,
+					edad: mascota.edad,
+					nombreDueño: mascota.dueño?.nombre,
+					telefono: mascota.dueño?.telefono,
+					domicilio: mascota.dueño?.domicilio,
 				})
+
+      console.log(this.form.value);
+
+
 			},
 			error: () => {},
 			complete: () => {},
 		})
 	}
 
-	agregarMascota(mascota: Mascota) {
+	agregarMascota(mascota: Mascota, dueño: Dueño) {
 		this._mascotaService.addMascota(mascota).subscribe({
-			next: (data) => {
+			next: (mascota) => {
 				this.loading = true
+				console.log(mascota, mascota.id)
+
+				if (mascota.id) {
+					const mascotaId: number = mascota.id
+					this._mascotaService.addDueño(mascotaId, dueño).subscribe((data) => {
+						console.log(data)
+					})
+				}
 			},
 			error: (error) => {
 				if (error) console.log(error)
@@ -134,7 +155,18 @@ export class AgregarEditarMascotaComponent implements OnInit {
 	}
 
 	agregarEditarMascota() {
-		const { nombre, especie, color, raza, peso, edad, sexo } = this.form.value
+		const {
+			nombre,
+			especie,
+			color,
+			raza,
+			peso,
+			edad,
+			sexo,
+			nombreDueño,
+			domicilio,
+			telefono,
+		} = this.form.value
 
 		const mascota: Mascota = {
 			nombre,
@@ -146,10 +178,18 @@ export class AgregarEditarMascotaComponent implements OnInit {
 			peso,
 		}
 
+		const dueño: Dueño = {
+			nombre: nombreDueño,
+			telefono,
+			domicilio,
+		}
+
+		console.log(dueño)
+
 		if (this.id != 0) {
 			this.editarMascota(this.id, mascota)
 		} else {
-			this.agregarMascota(mascota)
+			this.agregarMascota(mascota, dueño)
 		}
 	}
 }

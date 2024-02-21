@@ -19,7 +19,7 @@
 				(ngSubmit)="agregarEditarMascota()">
 				<mat-grid-list
 					cols="2"
-					rowHeight="5rem">
+					rowHeight="4.9rem">
 					<mat-grid-tile colspan="2">
 						<mat-form-field appearance="outline">
 							<mat-label>Nombre</mat-label>
@@ -89,6 +89,44 @@
 								autocomplete="off"
 								matInput /> </mat-form-field
 					></mat-grid-tile>
+
+					<mat-grid-tile
+						colspan="1"
+						class="subtitle-container">
+						<mat-card-subtitle class="subtitle"
+							>Datos del dueño</mat-card-subtitle
+						>
+					</mat-grid-tile>
+
+					<mat-grid-tile colspan="2">
+						<mat-form-field appearance="outline">
+							<mat-label>Nombre completo</mat-label>
+							<input
+								formControlName="nombreDueño"
+								autocomplete="off"
+								matInput />
+						</mat-form-field>
+					</mat-grid-tile>
+
+					<mat-grid-tile>
+						<mat-form-field appearance="outline">
+							<mat-label>Teléfono</mat-label>
+							<input
+								formControlName="telefono"
+								autocomplete="off"
+								matInput />
+						</mat-form-field>
+					</mat-grid-tile>
+
+					<mat-grid-tile>
+						<mat-form-field appearance="outline">
+							<mat-label>Domicilio</mat-label>
+							<input
+								formControlName="domicilio"
+								autocomplete="off"
+								matInput />
+						</mat-form-field>
+					</mat-grid-tile>
 
 					<mat-grid-tile
 						class="container-btn"

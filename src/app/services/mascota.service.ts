@@ -3,6 +3,7 @@ import { environment } from "../../environments/environment"
 import { HttpClient } from "@angular/common/http"
 import { Observable } from "rxjs"
 import { Mascota } from "../interfaces/mascota"
+import { Dueño } from "../interfaces/dueño";
 
 @Injectable({
 	providedIn: "root",
@@ -23,7 +24,11 @@ export class MascotaService {
 
 	addMascota(mascota: Mascota): Observable<Mascota> {
 		return this.http.post<Mascota>(`${this.myAppUrl}${this.myAPIUrl}`, mascota)
-	}
+  }
+
+  addDueño(id:number, dueño: Dueño): Observable<Dueño> {
+    return this.http.post<Dueño>(`${this.myAppUrl}${this.myAPIUrl}${id}/dueño`, dueño)
+  }
 
 	editMascota(id: number, mascota: Mascota): Observable<Mascota> {
 		return this.http.put<Mascota>(`${this.myAppUrl}${this.myAPIUrl}${id}`, mascota)

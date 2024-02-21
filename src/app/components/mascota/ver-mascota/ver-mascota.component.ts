@@ -98,7 +98,9 @@ export class VerMascotaComponent implements OnInit {
 	ngOnInit(): void {
 		this.mascota$.subscribe({
 			next: (mascota) => {
-				// Datos cargados con éxito, establecer loading en false
+        // Datos cargados con éxito, establecer loading en false
+        console.log(mascota);
+
 				this.loading = false
 			},
 			error: (error) => {
@@ -118,7 +120,6 @@ export class VerMascotaComponent implements OnInit {
 	// Implementación de la función
 	obtenerRutaImagen(parametro: Especie | Sexo): string {
 		// Lógica para determinar la ruta de la imagen según el tipo de mascota o sexo
-		console.log(parametro)
 
 		switch (parametro) {
 			case Especie.GATO:

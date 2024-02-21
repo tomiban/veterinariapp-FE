@@ -3,7 +3,7 @@ mat-card {
 	margin-top: 3rem;
 }
 mat-card-content {
-  margin-top: 15px;
+	margin-top: 15px;
 }
 
 mat-grid-tile {
@@ -28,4 +28,12 @@ mat-form-field {
 
 .btn-agregar {
 	margin-right: 10px; /* Ajusta el margen entre los botones según tus preferencias */
+}
+.subtitle-container {
+  position: relative;
+  
+}
+.subtitle {
+	position: absolute;
+	left: 0;
 }

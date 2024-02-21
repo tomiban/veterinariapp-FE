@@ -13,7 +13,7 @@ import { MatProgressBarModule } from "@angular/material/progress-bar"
 import { MascotaService } from "../../../services/mascota.service"
 import { SnackbarService } from "../../../services/snackbar.service"
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar"
-import { capitalizeFirst } from "../../../utils/utils"
+
 import { Especie } from "../../../constants/enums/especies.enum"
 
 @Component({
@@ -39,8 +39,8 @@ export class ListadoMascotaComponent implements OnInit {
 	displayedColumns: string[] = [
 		"nro",
 		"nombre",
-    "especie",
-    "sexo",
+		"especie",
+		"sexo",
 		"raza",
 		"color",
 		"edad",
@@ -79,9 +79,7 @@ export class ListadoMascotaComponent implements OnInit {
 				this.dataSource.data = data.map((mascota, index) => {
 					return {
 						...mascota,
-						especie: mascota.especie
-							? (capitalizeFirst(mascota.especie) as Especie)
-							: undefined,
+						especie: mascota.especie,
 						nro: index + 1,
 					}
 				})
