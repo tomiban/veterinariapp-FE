@@ -1,3 +1,3 @@
 export const environment = {
-	endpoint: "http://localhost:5022",
+	endpoint: "http://veterinariapp.runasp.net/",
 }
