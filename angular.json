@@ -102,8 +102,8 @@
           "builder": "@netlify-builder/deploy:deploy",
           "options": {
             "outputPath": "dist/fe",
-            "netlifyToken": "1824",
-            "siteId": ""
+            "netlifyToken": "nfp_rhW3jkgY3pWZM1sd3gSQFHzRFQN9HTzi852f",
+            "siteId": "20122168-85e8-4576-a1ac-0f80e30a5685"
           }
         }
       }
