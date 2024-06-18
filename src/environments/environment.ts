@@ -1,5 +1,5 @@
 export const environment = {
 	production: true,
-	endpoint: '/api/',
+	endpoint: 'http://veterinariapp.runasp.net/',
   };
   
