@@ -1,4 +1,4 @@
 export const environment = {
-	endpoint: "http://veterinariapp.runasp.net/",
+	endpoint: "https://veterinariapp-api.vercel.app/",
 
 }

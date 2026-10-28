@@ -1,5 +1,5 @@
 export const environment = {
 	production: true,
-	endpoint: 'http://veterinariapp.runasp.net/',
+	endpoint: 'https://veterinariapp-api.vercel.app/',
   };
   
