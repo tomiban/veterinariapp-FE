@@ -1,258 +1,157 @@
-.grid-container {
-	margin-top: 30px;
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	gap: 30px;
-}
-
-.card {
-	padding: 20px;
-}
-
-.card-title {
-	font-size: 2rem;
+.titulo {
 	display: flex;
-	justify-content: space-around;
 	align-items: center;
+	gap: 16px;
 }
-
-.card-title > p {
-	flex: 1;
-
-	margin: 0 18%;
-}
-
-.card-title > span {
-	align-self: self-end;
-}
-
-.sexSymbol-icon {
-	width: 30px;
+.titulo img {
+	width: 64px;
+	height: 64px;
 	object-fit: contain;
 }
 
-.card-content {
+.resumen {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
-	margin-top: 1.4rem;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+	margin-bottom: 24px;
+}
+.datos {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 12px;
+	margin: 8px 0 0;
+}
+dt,
+.contacto,
+.sin-dueño,
+.sin-dosis,
+.dosis-proxima,
+.historial span {
+	color: #5f6368;
+	font-size: 0.85rem;
+}
+dd {
+	margin: 2px 0 0;
+	display: flex;
 	align-items: center;
+	gap: 6px;
 }
-
-.info-dueño p {
-	padding: 5px;
+.sexo {
+	width: 16px;
 }
-
-.image-column,
-.info-column {
-	justify-self: center; /* Alinea la columna de la imagen a la izquierda */
-}
-
-.image-column img {
-	max-width: 200px; /* Establece el ancho máximo de la imagen al 100% del contenedor */
-	height: auto; /* Permite que la altura se ajuste proporcionalmente al ancho */
-}
-
-.info-column p {
-	padding: 5px 0; /* Alinea la columna de la información a la derecha */
-	font-size: 1rem;
-}
-.card-subtitles {
-	font-weight: 500;
-	font-size: 1.2rem;
-}
-
-.mat-card-actions {
-	grid-column: 1 / -1; /* Ocupar todas las columnas disponibles */
-	text-align: center;
-}
-
-.chip-container {
-	display: flex;
-	justify-content: center;
-}
-
-.toggle-container {
-	display: flex;
-	justify-content: end;
-}
-
-.toggle {
-	margin: 10px 15px 0 0;
-}
-
-.custom-chip {
-	width: 80%;
-	padding: 8px 16px;
-	background-color: #e94033; /* Color warn */
-	color: #ffffff; /* Color del texto */
-	border-radius: 4px;
-	cursor: pointer;
-	transition: background-color 0.3s;
-	margin-top: 10px;
+.dueño-nombre {
+	margin: 8px 0;
 	font-size: 1.1rem;
 	font-weight: 500;
-	text-align: center;
+}
+a {
+	color: #5e35b1;
 }
 
-.custom-chip:active {
-	background-color: #a61f1f; /* Color de fondo al hacer clic */
-	color: #ffffff; /* Color del texto al hacer clic */
+.tab-contenido {
+	padding: 16px;
 }
-
-.list-mascota {
-	margin: 40px 0px;
-}
-
-table {
-	width: 100%;
-}
-
-.mat-mdc-form-field {
-	font-size: 14px;
-	width: 100%;
-}
-
-td,
-th {
-	width: 25%;
-	text-align: center;
-}
-
-/* Aplica el efecto hover a todas las filas excepto la primera */
-
-tr.data-row:not(.expanded-row):hover td {
-	background: whitesmoke;
-	cursor: pointer;
-	color: black; /* Cambia al color de texto deseado */
-}
-
-/* Aplica el efecto active a todas las filas excepto la primera */
-tr.data-row:not(.expanded-row):active td {
-	background: #efefef;
-	color: black; /* Cambia al color de texto deseado */
-}
-
-button {
-	border: 0;
-	background: none;
-	cursor: pointer;
-}
-
-button[disabled] {
-	opacity: 0.6; /* Cambia la opacidad para indicar que está deshabilitado */
-	cursor: not-allowed; /* Cambia el cursor para indicar que no se puede hacer clic */
-	/* Agrega otros estilos de acuerdo a tus necesidades */
-	background: none;
-}
-
-.add {
-	color: #1470c6;
-	transition: all 200ms; /* Modificado para agrupar la propiedad transition */
-	margin-right: 0.5rem;
-	transform: scale(1.2);
-}
-
-/* Estilos cuando el botón no está deshabilitado y se hace hover */
-.add:not(:disabled):hover {
-	color: #0053a0;
-	transform: scale(1.4);
-}
-
-.delete {
-	color: #4f5b66;
-	transition: all;
-	transition-duration: 200ms;
-}
-
-.delete:hover {
-	color: #f44201;
-	transform: scale(1.2);
-}
-
-.edit {
-	color: #f8cf05;
-	margin-right: 0.5rem;
-	transition: all;
-	transition-duration: 200ms;
-}
-
-.edit:hover {
-	color: #fca635;
-	transform: scale(1.2);
-}
-
-.btn-primary {
-	font-size: 0.8rem;
-	line-height: 1rem;
-}
-
-.btn-icons {
+.tab-acciones {
 	display: flex;
-	justify-content: center;
+	flex-wrap: wrap;
 	align-items: center;
+	justify-content: flex-end;
+	gap: 12px;
+	margin-bottom: 16px;
 }
-
-.btn-container {
-	text-align: center;
-}
-
-tr.expanded-row:hover {
-	background: initial;
-	color: initial;
-}
-
-tr.expanded-row {
-	height: 0;
-}
-
-tr.data-row td {
-	border-bottom-width: 0;
-}
-
-.expanded-detail {
-	overflow: hidden;
-	transition: box-shadow 0.3s ease-in-out;
-	padding: 0 5vw; /* Utilizamos porcentaje relativo al ancho de la pantalla */
-}
-
-.dosis-item {
+.proximas {
 	display: flex;
 	align-items: center;
+	gap: 8px;
+	margin-right: auto;
+	padding: 8px 12px;
+	border-radius: 8px;
+	background: #f3effb;
+}
+
+.vacunas {
+	display: grid;
+	gap: 12px;
+}
+.vacuna {
+	border: 1px solid #e6e1f0;
+	border-radius: 10px;
+	padding: 12px 16px;
+}
+.vacuna-cabecera {
+	display: flex;
+	flex-wrap: wrap;
 	justify-content: space-between;
-	gap: 2vw; /* Utilizamos un valor relativo */
-	margin-top: 2vw; /* Utilizamos porcentaje relativo al ancho de la pantalla */
+	gap: 8px;
 }
-
-.dosis-info {
-	font-size: 0.8rem; /* Utilizamos porcentaje relativo al ancho de la pantalla */
+.vacuna-cabecera h3 {
+	display: inline;
+	margin: 0 8px 0 0;
+	font-size: 1.05rem;
+}
+.vacuna-acciones {
 	display: flex;
-	gap: 11vw; /* Utilizamos un valor relativo */
+	align-items: center;
 }
-
-.info-details {
+.progreso {
 	display: flex;
-	gap: 3vw; /* Utilizamos un valor relativo */
+	align-items: center;
+	gap: 12px;
+	margin: 10px 0;
+	font-size: 0.85rem;
+}
+.progreso mat-progress-bar {
+	max-width: 240px;
+	border-radius: 4px;
 }
 
-.info-label {
-	font-weight: bold;
-	color: #333;
+.dosis {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.dosis li {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px 12px;
+	padding: 4px 0;
+	border-top: 1px dashed #ece8f3;
+}
+.dosis-numero {
+	font-weight: 500;
+	color: #5e35b1;
+}
+.dosis-borrar {
+	margin-left: auto;
 }
 
-.info-value {
-	font-style: italic;
-	color: #555;
+.historial {
+	list-style: none;
+	margin: 0;
+	padding: 0 0 0 12px;
+	border-left: 2px solid #d1c4e9;
+}
+.historial li {
+	display: flex;
+	gap: 16px;
+	padding: 8px 0 8px 12px;
+}
+.historial time {
+	min-width: 88px;
+	font-weight: 500;
+}
+.historial div {
+	display: flex;
+	flex-direction: column;
 }
 
-.dosis-icon {
-	width: 5vw; /* Utilizamos porcentaje relativo al ancho de la pantalla */
-	cursor: pointer;
-}
-
-.completa {
-	color: darkgreen;
-}
-
-.incompleta {
-	color: crimson;
+@media (max-width: 599px) {
+	.resumen {
+		grid-template-columns: 1fr;
+	}
+	.historial li {
+		flex-direction: column;
+		gap: 2px;
+	}
 }

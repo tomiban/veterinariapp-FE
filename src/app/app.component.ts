@@ -1,15 +1,19 @@
 import { Component } from "@angular/core"
-import { CommonModule } from "@angular/common"
-import { RouterOutlet } from "@angular/router"
-import { ListadoMascotaComponent } from "./components/mascota/listado-mascota/listado-mascota.component"
+import { RouterLink, RouterLinkActive, RouterOutlet } from "@angular/router"
+import { MatToolbarModule } from "@angular/material/toolbar"
+import { MatButtonModule } from "@angular/material/button"
+import { MatIconModule } from "@angular/material/icon"
 
 @Component({
 	selector: "app-root",
 	standalone: true,
-	imports: [CommonModule, RouterOutlet, ListadoMascotaComponent],
+	imports: [RouterOutlet, RouterLink, RouterLinkActive, MatToolbarModule, MatButtonModule, MatIconModule],
 	templateUrl: "./app.component.html",
 	styleUrl: "./app.component.css",
 })
 export class AppComponent {
-	title = "Mascotas"
+	secciones = [
+		{ ruta: "/mascotas", nombre: "Mascotas", icono: "pets" },
+		{ ruta: "/duenos", nombre: "Dueños", icono: "people" },
+	]
 }

@@ -1,120 +1,143 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core"
-import { RouterLink } from "@angular/router"
+import { Component, OnInit, ViewChild } from "@angular/core"
+import { DecimalPipe } from "@angular/common"
+import { Router, RouterLink } from "@angular/router"
 import { MatTableDataSource, MatTableModule } from "@angular/material/table"
-import { Mascota } from "../../../interfaces/mascota"
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator"
 import { MatSort, MatSortModule } from "@angular/material/sort"
 import { MatInputModule } from "@angular/material/input"
 import { MatFormFieldModule } from "@angular/material/form-field"
+import { MatSelectModule } from "@angular/material/select"
 import { MatIconModule } from "@angular/material/icon"
 import { MatTooltipModule } from "@angular/material/tooltip"
 import { MatButtonModule } from "@angular/material/button"
 import { MatProgressBarModule } from "@angular/material/progress-bar"
+import { Mascota } from "../../../interfaces/mascota"
 import { MascotaService } from "../../../services/mascota.service"
 import { SnackbarService } from "../../../services/snackbar.service"
-import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar"
+import { ConfirmacionService } from "../../../services/confirmacion.service"
+import { EstadoVacioComponent } from "../../shared/estado-vacio.component"
+import { ESPECIES, obtenerRutaImagen } from "../../../constants/especies"
 
-import { Especie } from "../../../constants/enums/especies.enum"
+interface Filtro {
+	texto: string
+	especie: string
+}
 
 @Component({
 	selector: "app-listado-mascota",
 	standalone: true,
 	imports: [
+		DecimalPipe,
 		RouterLink,
 		MatTableModule,
 		MatPaginatorModule,
 		MatSortModule,
 		MatInputModule,
 		MatFormFieldModule,
+		MatSelectModule,
 		MatIconModule,
 		MatTooltipModule,
 		MatButtonModule,
 		MatProgressBarModule,
-		MatSnackBarModule,
+		EstadoVacioComponent,
 	],
 	templateUrl: "./listado-mascota.component.html",
 	styleUrl: "./listado-mascota.component.css",
 })
 export class ListadoMascotaComponent implements OnInit {
-	displayedColumns: string[] = [
-		"nro",
-		"nombre",
-		"especie",
-		"sexo",
-		"raza",
-		"color",
-		"edad",
-		"peso",
-		"acciones",
-	]
+	displayedColumns: string[] = ["nombre", "especie", "sexo", "raza", "edad", "peso", "dueño", "acciones"]
 	dataSource = new MatTableDataSource<Mascota>()
-	loading: boolean = false
+	loading = false
+	error = false
+	especies = ESPECIES
+	filtro: Filtro = { texto: "", especie: "" }
+	obtenerRutaImagen = obtenerRutaImagen
 
-	@ViewChild(MatPaginator) paginator!: MatPaginator
-	@ViewChild(MatSort) sort!: MatSort
+	@ViewChild(MatPaginator) set paginator(paginator: MatPaginator) {
+		this.dataSource.paginator = paginator
+	}
+	@ViewChild(MatSort) set sort(sort: MatSort) {
+		this.dataSource.sort = sort
+	}
 
 	constructor(
 		private _mascotaService: MascotaService,
-		private _notificacionService: SnackbarService,
-		private _snackBar: MatSnackBar
-	) {}
+		private _sbService: SnackbarService,
+		private _confirmacion: ConfirmacionService,
+		private _router: Router
+	) {
+		// El filtro viaja como JSON para combinar texto libre y especie.
+		this.dataSource.filterPredicate = (mascota, filtroJson) => {
+			const { texto, especie }: Filtro = JSON.parse(filtroJson)
+			const coincideEspecie = !especie || mascota.especie === especie
+			const coincideTexto =
+				!texto ||
+				[mascota.nombre, mascota.raza, mascota.color, mascota.dueño?.nombre].some((valor) =>
+					(valor ?? "").toLowerCase().includes(texto)
+				)
+			return coincideEspecie && coincideTexto
+		}
+		this.dataSource.sortingDataAccessor = (mascota, columna) =>
+			columna === "dueño" ? mascota.dueño?.nombre ?? "" : (mascota as any)[columna]
+	}
 
 	ngOnInit(): void {
 		this.obtenerMascotas()
 	}
 
-	applyFilter(event: Event) {
-		const filterValue = (event.target as HTMLInputElement).value
-		this.dataSource.filter = filterValue.trim().toLowerCase()
+	get hayMascotas(): boolean {
+		return this.dataSource.data.length > 0
+	}
 
-		if (this.dataSource.paginator) {
-			this.dataSource.paginator.firstPage()
-		}
+	aplicarFiltro(cambios: Partial<Filtro>) {
+		this.filtro = { ...this.filtro, ...cambios }
+		this.dataSource.filter = JSON.stringify({
+			texto: this.filtro.texto.trim().toLowerCase(),
+			especie: this.filtro.especie,
+		})
+		this.dataSource.paginator?.firstPage()
+	}
+
+	textoDeBusqueda(event: Event): string {
+		return (event.target as HTMLInputElement).value
 	}
 
 	obtenerMascotas() {
 		this.loading = true
+		this.error = false
 		this._mascotaService.getMascotas().subscribe({
 			next: (data) => {
-				this.dataSource.data = data.map((mascota, index) => {
-					return {
-						...mascota,
-						especie: mascota.especie,
-						nro: index + 1,
-					}
-				})
-
-				this.dataSource.paginator = this.paginator
-				this.dataSource.sort = this.sort
-				this.paginator._intl.itemsPerPageLabel = "Mascotas por página"
-			},
-			error: (e) => {
+				this.dataSource.data = data
 				this.loading = false
-				alert(`Servidor caido: ${e.message}`)
 			},
-			complete: () => {
+			error: () => {
+				this.error = true
 				this.loading = false
 			},
 		})
 	}
 
-	eliminarMascota(event: MouseEvent, id: number) {
-		this.loading = true
-		event.stopPropagation()
+	verMascota(mascota: Mascota) {
+		this._router.navigate(["/mascotas", mascota.id])
+	}
 
-		this._mascotaService.deleteMascota(id).subscribe({
-			next: () => {
-				this._notificacionService.mostrarMensajeExitoso(
-					"¡Mascota eliminada con éxito!"
-				)
-				this.obtenerMascotas()
-			},
-			error: (error) => {
-				this._notificacionService.mostrarMensajeExitoso("¡Error!")
-			},
-			complete: () => {
-				this.loading = false
-			},
-		})
+	eliminarMascota(event: MouseEvent, mascota: Mascota) {
+		event.stopPropagation()
+		this._confirmacion
+			.confirmar({
+				titulo: `¿Borrar a ${mascota.nombre}?`,
+				mensaje: "Se borran también sus vacunas y dosis registradas. No se puede deshacer.",
+			})
+			.subscribe((confirmado) => {
+				if (!confirmado || !mascota.id) return
+				this.loading = true
+				this._mascotaService.deleteMascota(mascota.id).subscribe({
+					next: () => {
+						this._sbService.mostrarMensajeExitoso("Mascota borrada")
+						this.obtenerMascotas()
+					},
+					error: () => (this.loading = false),
+				})
+			})
 	}
 }

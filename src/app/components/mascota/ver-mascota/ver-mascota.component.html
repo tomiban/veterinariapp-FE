@@ -1,290 +1,153 @@
-<div
-	class="title"
-	[ngStyle]="{ 'background-color': isVerMascota && '#6d42ba' }">
-	<h1>Mascota</h1>
-</div>
 @if (loading) {
-<mat-progress-bar
-	mode="indeterminate"
-	color="accent"></mat-progress-bar>
+<mat-progress-bar mode="indeterminate" color="accent"></mat-progress-bar>
 }
 
-<!--  La variable mascota en as mascota contendrá el valor emitido por el Observable cuando esté disponible. -->
 <div class="container">
-	<button
-		mat-raised-button
-		routerLink="/animales">
-		Volver
-	</button>
-	<div class="grid-container">
-		@if (mascota$ | async; as mascota; ) {
-		<mat-card class="card">
-			<mat-card-title class="card-title"
-				><p>{{ mascota.nombre }}</p>
-				<span>
-					@if(mascota.sexo == 'Macho') {
-					<img
-						class="sexSymbol-icon"
-						[src]="obtenerRutaImagen(mascota.sexo)"
-						alt="" />
-					} @else{
-					<img
-						class="sexSymbol-icon"
-						[src]="obtenerRutaImagen(mascota.sexo)"
-						alt="" />
-					}
-				</span></mat-card-title
-			>
+	<a class="volver" routerLink="/mascotas"><mat-icon inline>arrow_back</mat-icon> Pacientes</a>
 
-			<mat-card-content class="card-content">
-				<div class="image-column">
-					<!-- TODO: DETECTAR IMAGEN SEGUN MASCOTA -->
-					@if(mascota.especie) {
-					<img
-						mat-card-xl-image
-						[src]="obtenerRutaImagen(mascota.especie)" />
-					}
-				</div>
-				<div class="info-column">
-					<p><span class="card-subtitles">Color: </span> {{ mascota.color }}</p>
-					<p><span class="card-subtitles">Raza: </span> {{ mascota.raza }}</p>
-					<p><span class="card-subtitles">Edad: </span> {{ mascota.edad }}</p>
-					<p><span class="card-subtitles">Peso: </span>{{ mascota.peso }}kg</p>
-				</div>
+	@if (mascota) {
+	<header class="page-header">
+		<div class="titulo">
+			<img [src]="obtenerRutaImagen(mascota.especie)" [alt]="mascota.especie ?? ''" />
+			<div>
+				<h1>{{ mascota.nombre }}</h1>
+				<p>{{ mascota.especie }} · {{ mascota.raza }}</p>
+			</div>
+		</div>
+		<div class="acciones">
+			<a mat-stroked-button [routerLink]="['/mascotas/editar', mascota.id]"><mat-icon>edit</mat-icon> Editar</a>
+			<button mat-stroked-button color="warn" (click)="eliminarMascota()"><mat-icon>delete</mat-icon> Borrar</button>
+		</div>
+	</header>
+
+	<div class="resumen">
+		<mat-card>
+			<mat-card-header><mat-card-title>Datos</mat-card-title></mat-card-header>
+			<mat-card-content>
+				<dl class="datos">
+					<div><dt>Sexo</dt><dd><img class="sexo" [src]="obtenerRutaImagen(mascota.sexo)" alt="" /> {{ mascota.sexo }}</dd></div>
+					<div><dt>Edad</dt><dd>{{ mascota.edad }} {{ mascota.edad === 1 ? "año" : "años" }}</dd></div>
+					<div><dt>Peso</dt><dd>{{ mascota.peso | number : "1.0-2" }} kg</dd></div>
+					<div><dt>Color</dt><dd>{{ mascota.color }}</dd></div>
+				</dl>
 			</mat-card-content>
 		</mat-card>
-		<mat-card class="card">
-			<mat-card-title class="card-title">{{
-				mascota["dueño"]?.nombre
-			}}</mat-card-title>
-			<div class="toggle-container">
-				<mat-slide-toggle
-					class="toggle"
-					labelPosition="before"
-					(toggleChange)="handleToggle()"
-					>Falta Pagar?</mat-slide-toggle
-				>
-			</div>
 
-			<mat-card-content class="card-content">
-				<div class="info-column">
-					<p><span class="card-subtitles">Dni: </span> 40645068</p>
-					<p>
-						<span class="card-subtitles">Celular: </span>
-						{{ mascota["dueño"]?.telefono }}
-					</p>
-					<p>
-						<span class="card-subtitles">Domicilio: </span>
-						{{ mascota["dueño"]?.domicilio }}
-					</p>
-				</div>
+		<mat-card>
+			<mat-card-header><mat-card-title>Dueño</mat-card-title></mat-card-header>
+			<mat-card-content>
+				@if (mascota['dueño']; as responsable) {
+				<p class="dueño-nombre"><a [routerLink]="['/duenos', responsable.id]">{{ responsable.nombre }}</a></p>
+				<p class="contacto">
+					<mat-icon inline>call</mat-icon>
+					@if (responsable.telefono) {
+					<a [href]="'tel:' + responsable.telefono">{{ responsable.telefono }}</a>
+					} @else { Sin teléfono }
+				</p>
+				<p class="contacto"><mat-icon inline>home</mat-icon> {{ responsable.domicilio || "Sin domicilio" }}</p>
+				} @else {
+				<p class="sin-dueño">Todavía no tiene dueño asignado.</p>
+				<a mat-stroked-button color="primary" [routerLink]="['/mascotas/editar', mascota.id]">Asignar dueño</a>
+				}
 			</mat-card-content>
-			@if(deuda) {
-			<!-- Dialog para gestionar el monto + Boton con hover saldar -->
-			<div class="chip-container">
-				<span
-					class="custom-chip"
-					mat-raised-button
-					color="warn"
-					>Deuda</span
-				>
-			</div>
-			}
 		</mat-card>
-		}
 	</div>
 
-	<!-- Table con 2 tabs: Historia CLinica / Vacunas -->
-
-	<div class="mat-elevation-z8 list-mascota">
-		<table
-			mat-table
-			multiTemplateDataRows
-			[dataSource]="dataSource">
-			@for (column of displayedColumns; track column) {
-			<ng-container matColumnDef="{{ column }}">
-				@if(column == 'acciones') {
-				<th
-					mat-header-cell
-					*matHeaderCellDef
-					class="btn-container">
-					<button
-						mat-raised-button
-						color="primary"
-						class="btn-primary"
-						routerLink="vacunas/agregar">
-						Agregar
-					</button>
-				</th>
-				<td
-					mat-cell
-					*matCellDef="let element">
-					<div class="btn-icons">
-						<button
-							class="add"
-							routerLink="vacunas/{{ element.id }}/dosis"
-							[disabled]="element.Dosis.length === element.Cantidad">
-							<mat-icon
-								#tooltip="matTooltip"
-								matTooltip="Añadir dosis"
-								fontIcon="add"
-								class=""></mat-icon>
-						</button>
-						<button routerLink="vacunas/{{ element.id }}/editar">
-							<mat-icon
-								#tooltip="matTooltip"
-								matTooltip="Editar vacuna"
-								fontIcon="edit"
-								class="edit"></mat-icon>
-						</button>
-						<button (click)="removerVacuna(element.id)">
-							<mat-icon
-								#tooltip="matTooltip"
-								matTooltip="Borrar vacuna"
-								fontIcon="delete"
-								class="delete"></mat-icon>
-						</button>
+	<mat-tab-group class="panel tabs" animationDuration="150ms">
+		<mat-tab [label]="'Vacunas (' + vacunas.length + ')'">
+			<div class="tab-contenido">
+				<div class="tab-acciones">
+					@if (proximas.length) {
+					<div class="proximas">
+						<mat-icon>event</mat-icon>
+						<span>
+							Próxima aplicación:
+							<strong>{{ proximas[0].nombre }}</strong> el {{ proximas[0].proxima | date : "dd/MM/yyyy" }}
+							@if (proximas[0].estado === "vencida") {<span class="chip chip-vencida">vencida</span>}
+						</span>
 					</div>
-				</td>
-				} @else if (column == 'Completada') {
-				<th
-					mat-header-cell
-					*matHeaderCellDef>
-					{{ column }}
-				</th>
-				<td
-					mat-cell
-					*matCellDef="let element">
-					@if(element.Completada ) {
-					<mat-icon
-						class="completa"
-						#tooltip="matTooltip"
-						matTooltip="Completa"
-						fontIcon="verified"></mat-icon>
-					} @else {
-					<mat-icon
-						class="incompleta"
-						#tooltip="matTooltip"
-						matTooltip="Incompleta"
-						fontIcon="cancel"></mat-icon>
 					}
-				</td>
-				} @else {
-				<th
-					mat-header-cell
-					*matHeaderCellDef>
-					{{ column }}
-				</th>
-				<td
-					mat-cell
-					*matCellDef="let element">
-					{{ element[column] }}
-				</td>
-				}
-			</ng-container>
+					<a mat-flat-button color="primary" routerLink="vacunas/agregar"><mat-icon>vaccines</mat-icon> Agregar vacuna</a>
+				</div>
 
-			}
-			<ng-container matColumnDef="expand">
-				<th
-					mat-header-cell
-					*matHeaderCellDef
-					aria-label="row actions">
-					&nbsp;
-				</th>
-
-				<td
-					mat-cell
-					*matCellDef="let element">
-					<button
-						mat-icon-button
-						aria-label="expand row"
-						(click)="
-							expandedElement = expandedElement === element ? null : element;
-							$event.stopPropagation()
-						">
-						@if (expandedElement === element) {
-						<mat-icon>keyboard_arrow_up</mat-icon>
-						} @else {
-						<mat-icon>keyboard_arrow_down</mat-icon>
-						}
-					</button>
-				</td>
-			</ng-container>
-
-			<!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
-			<ng-container matColumnDef="expandedDetail">
-				<td
-					class="td-expanded"
-					mat-cell
-					*matCellDef="let element"
-					[attr.colspan]="columnsToDisplayWithExpand.length">
-					<div
-						class="expanded-detail"
-						[@detailExpand]="
-							element == expandedElement ? 'expanded' : 'collapsed'
-						">
-						<div
-							*ngFor="let el of element.Dosis; index as i"
-							class="dosis-item">
-							<div class="dosis-icon">
-								<mat-icon
-									#tooltip="matTooltip"
-									matTooltip="{{ i + 1 }}° Dosis"
-									fontIcon="vaccines"></mat-icon>
+				@if (vacunas.length) {
+				<div class="vacunas">
+					@for (vacuna of vacunas; track vacuna.id) {
+					<article class="vacuna">
+						<div class="vacuna-cabecera">
+							<div>
+								<h3>{{ vacuna.nombre }}</h3>
+								<span class="chip" [class.chip-ok]="vacuna.estado === 'completa'" [class.chip-pendiente]="vacuna.estado === 'pendiente' || vacuna.estado === 'sin-dosis'" [class.chip-vencida]="vacuna.estado === 'vencida'">
+									{{ etiquetas[vacuna.estado] }}
+								</span>
 							</div>
-
-							<div class="dosis-info">
-								<div class="info-details">
-									<p class="info-label">Fecha:</p>
-									<p class="info-value">
-										{{ el.fechaAplicacion | date : "dd/MM/yyyy" }}
-									</p>
-								</div>
-
-								<div class="info-details">
-									<p class="info-label">Fecha siguiente aplicación:</p>
-									<p class="info-value">
-										{{ el.fechaProximaAplicacion | date : "dd/MM/yyyy" }}
-									</p>
-								</div>
-							</div>
-							<div
-								class="dosis-icon"
-								(click)="removerDosis(el.id, expandedElement?.id)">
-								<mat-icon
-									#tooltip="matTooltip"
-									matTooltip="Remover dosis"
-									fontIcon="remove"
-									class="delete"></mat-icon>
+							<div class="vacuna-acciones">
+								<a mat-stroked-button color="primary" [routerLink]="['vacunas', vacuna.id, 'dosis']" [disabled]="vacuna.estado === 'completa'">
+									<mat-icon>add</mat-icon> Registrar dosis
+								</a>
+								<button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Más acciones"><mat-icon>more_vert</mat-icon></button>
+								<mat-menu #menu="matMenu">
+									<a mat-menu-item [routerLink]="['vacunas', vacuna.id, 'editar']"><mat-icon>edit</mat-icon> Editar</a>
+									<button mat-menu-item (click)="removerVacuna(vacuna)"><mat-icon>delete</mat-icon> Borrar</button>
+								</mat-menu>
 							</div>
 						</div>
-					</div>
-				</td>
-			</ng-container>
 
-			<tr
-				mat-header-row
-				*matHeaderRowDef="columnsToDisplayWithExpand"></tr>
-			<tr
-				mat-row
-				*matRowDef="let element; columns: columnsToDisplayWithExpand"
-				class="data-row"
-				[class.example-expanded-row]="expandedElement === element"
-				(click)="
-					expandedElement = expandedElement === element ? null : element
-				"></tr>
-			<tr
-				mat-row
-				*matRowDef="let row; columns: ['expandedDetail']"
-				class="expanded-row"></tr>
+						<div class="progreso">
+							<mat-progress-bar mode="determinate" [value]="porcentaje(vacuna)"></mat-progress-bar>
+							<span>{{ vacuna.aplicadas }} de {{ vacuna.cantidadDosis }} dosis</span>
+						</div>
 
-			<!--  -->
-		</table>
+						@if (vacuna.dosis.length) {
+						<ol class="dosis">
+							@for (dosis of vacuna.dosis; track dosis.id; let i = $index) {
+							<li>
+								<span class="dosis-numero">{{ i + 1 }}ª</span>
+								<span>Aplicada el <strong>{{ dosis.fechaAplicacion | date : "dd/MM/yyyy" }}</strong></span>
+								<span class="dosis-proxima">Próxima: {{ dosis.fechaProximaAplicacion | date : "dd/MM/yyyy" }}</span>
+								<button mat-icon-button class="dosis-borrar" (click)="removerDosis(vacuna, dosis, i + 1)" matTooltip="Borrar dosis" aria-label="Borrar dosis">
+									<mat-icon>close</mat-icon>
+								</button>
+							</li>
+							}
+						</ol>
+						} @else {
+						<p class="sin-dosis">Todavía no se registró ninguna dosis.</p>
+						}
+					</article>
+					}
+				</div>
+				} @else {
+				<app-estado-vacio icono="vaccines" titulo="Sin vacunas registradas" mensaje="Agregá la primera vacuna con la fecha de su primera dosis."></app-estado-vacio>
+				}
+			</div>
+		</mat-tab>
 
-		<mat-paginator
-			[pageSizeOptions]="[5, 10, 20]"
-			showFirstLastButtons
-			aria-label="Vacunas por página">
-		</mat-paginator>
+		<mat-tab label="Historial">
+			<div class="tab-contenido">
+				@if (historial.length) {
+				<ol class="historial">
+					@for (entrada of historial; track entrada.dosis.id) {
+					<li>
+						<time>{{ entrada.dosis.fechaAplicacion | date : "dd/MM/yyyy" }}</time>
+						<div>
+							<strong>{{ entrada.vacuna.nombre }}</strong>
+							<span>Dosis {{ entrada.numero }} de {{ entrada.vacuna.cantidadDosis }} · próxima {{ entrada.dosis.fechaProximaAplicacion | date : "dd/MM/yyyy" }}</span>
+						</div>
+					</li>
+					}
+				</ol>
+				} @else {
+				<app-estado-vacio icono="history" titulo="Sin dosis aplicadas" mensaje="Acá vas a ver cada dosis aplicada, de la más reciente a la más vieja."></app-estado-vacio>
+				}
+			</div>
+		</mat-tab>
+	</mat-tab-group>
+	} @else if (!loading) {
+	<div class="panel">
+		<app-estado-vacio icono="search_off" titulo="No encontramos esta mascota">
+			<a mat-stroked-button color="primary" routerLink="/mascotas">Ver todos los pacientes</a>
+		</app-estado-vacio>
 	</div>
+	}
 </div>

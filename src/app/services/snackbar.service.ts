@@ -8,13 +8,21 @@ export class SnackbarService {
 	constructor(private snackBar: MatSnackBar) {}
 
 	mostrarMensajeExitoso(mensaje: string): void {
+		this.abrir(mensaje, "snackbar", 2500)
+	}
+
+	mostrarError(mensaje: string): void {
+		this.abrir(mensaje, "snackbar-error", 5000)
+	}
+
+	private abrir(mensaje: string, panelClass: string, duration: number): void {
 		const config: MatSnackBarConfig = {
-			duration: 2000,
+			duration,
 			horizontalPosition: "center",
 			verticalPosition: "bottom",
-			panelClass: "snackbar",
+			panelClass,
 		}
 
-		this.snackBar.open(mensaje, "X", config)
+		this.snackBar.open(mensaje, "Cerrar", config)
 	}
 }

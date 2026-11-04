@@ -10,9 +10,27 @@ Angular 17 + Angular Material, consumiendo la API .NET publicada como contenedor
 API y Swagger: [veterinariapp-api](https://github.com/tomiban/veterinariapp-API) ·
 [docs interactivas](https://veterinariapp-api.vercel.app/swagger/index.html)
 
+## Funciones
+
+- **Pacientes**: listado con búsqueda (nombre, raza, color o dueño), filtro por especie,
+  orden por columna y paginado. Alta y edición con validaciones alineadas con la API.
+- **Ficha de la mascota**: datos, dueño con contacto y vacunas. Cada vacuna muestra su
+  progreso (dosis aplicadas sobre el esquema) y su estado: completa, en curso o con la
+  dosis vencida. Arriba se destaca la próxima aplicación.
+- **Dosis**: registro con fecha de aplicación y de próxima aplicación (validada para que
+  sea posterior), borrado para corregir cargas equivocadas.
+- **Historial de vacunación**: todas las dosis de la mascota en orden cronológico.
+- **Dueños**: listado con búsqueda y cantidad de mascotas, alta y edición, ficha con sus
+  mascotas y acceso directo para registrar una nueva ya asignada. Un dueño puede tener
+  varias mascotas; al borrarlo, sus mascotas quedan sin dueño.
+- Confirmación antes de cada borrado, estados vacíos, avisos de error de la API en un solo
+  lugar (interceptor HTTP) y reintento cuando el servidor tarda en despertar.
+- Responsive: en el celular las tablas se quedan con las columnas clave y los formularios
+  pasan a una columna. Fechas y números en formato argentino.
+
 ## Stack
 
-- Angular 17 con standalone components
+- Angular 17 con standalone components, control flow (`@if`, `@for`) y rutas con carga diferida
 - Angular Material
 - TypeScript
 
@@ -25,7 +43,13 @@ npm ci
 npm start   # http://localhost:4200
 ```
 
-El endpoint de la API se configura en `src/environments/environment.development.ts`.
+El endpoint de la API se configura en `src/environments/environment.development.ts`
+(apunta a la API desplegada). Para trabajar contra la API corriendo en local, en el
+puerto 5080:
+
+```bash
+npm start -- --configuration local
+```
 
 ## Build y deploy
 
