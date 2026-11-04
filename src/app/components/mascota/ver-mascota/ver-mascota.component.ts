@@ -1,216 +1,203 @@
-import { Component, OnInit, ViewChild } from "@angular/core"
-import { AsyncPipe, CommonModule, NgIf, NgStyle } from "@angular/common"
+import { Component, OnInit } from "@angular/core"
+import { DatePipe, DecimalPipe } from "@angular/common"
+import { ActivatedRoute, Router, RouterLink } from "@angular/router"
 import { MatCardModule } from "@angular/material/card"
 import { MatButtonModule } from "@angular/material/button"
-import { ActivatedRoute, RouterLink } from "@angular/router"
-import { MascotaService } from "../../../services/mascota.service"
-import { Mascota } from "../../../interfaces/mascota"
 import { MatProgressBarModule } from "@angular/material/progress-bar"
-import { Observable } from "rxjs"
-import { MatChipsModule } from "@angular/material/chips"
-import { MatSlideToggleModule } from "@angular/material/slide-toggle"
 import { MatTabsModule } from "@angular/material/tabs"
-import { MatTableDataSource, MatTableModule } from "@angular/material/table"
-import { MatInputModule } from "@angular/material/input"
-import { MatFormFieldModule } from "@angular/material/form-field"
-import { Especie } from "../../../constants/enums/especies.enum"
-import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator"
-import { Vacuna } from "../../../interfaces/vacunas"
 import { MatIconModule } from "@angular/material/icon"
 import { MatTooltipModule } from "@angular/material/tooltip"
+import { MatMenuModule } from "@angular/material/menu"
+import { forkJoin } from "rxjs"
+import { Mascota } from "../../../interfaces/mascota"
+import { Vacuna } from "../../../interfaces/vacunas"
+import { Dosis } from "../../../interfaces/dosis"
+import { MascotaService } from "../../../services/mascota.service"
 import { VacunaService } from "../../../services/vacuna.service"
-import { animate, state, style, transition, trigger } from "@angular/animations"
 import { DosisService } from "../../../services/dosis.service"
 import { SnackbarService } from "../../../services/snackbar.service"
-import { Sexo } from "../../../constants/enums/sexo.enum"
+import { ConfirmacionService } from "../../../services/confirmacion.service"
+import { EstadoVacioComponent } from "../../shared/estado-vacio.component"
+import { obtenerRutaImagen } from "../../../constants/especies"
+
+type EstadoVacuna = "completa" | "vencida" | "pendiente" | "sin-dosis"
+
+interface VacunaFicha extends Vacuna {
+	dosis: Dosis[]
+	aplicadas: number
+	proxima: Date | null
+	estado: EstadoVacuna
+}
+
+interface EntradaHistorial {
+	vacuna: VacunaFicha
+	dosis: Dosis
+	numero: number
+}
 
 @Component({
 	selector: "app-ver-mascota",
-	animations: [
-		trigger("detailExpand", [
-			state("collapsed,void", style({ height: "0px", minHeight: "0" })),
-			state("expanded", style({ height: "*" })),
-			transition(
-				"expanded <=> collapsed",
-				animate("225ms cubic-bezier(0.4, 0.0, 0.2, 1)")
-			),
-		]),
-	],
 	standalone: true,
 	imports: [
-		NgStyle,
+		DatePipe,
+		DecimalPipe,
+		RouterLink,
 		MatCardModule,
 		MatButtonModule,
-		RouterLink,
 		MatProgressBarModule,
-		NgStyle,
-		AsyncPipe,
-		MatChipsModule,
-		MatSlideToggleModule,
 		MatTabsModule,
-		MatTableModule,
-		MatInputModule,
-		MatFormFieldModule,
-		MatPaginatorModule,
 		MatIconModule,
 		MatTooltipModule,
-		CommonModule,
-		NgIf,
+		MatMenuModule,
+		EstadoVacioComponent,
 	],
 	templateUrl: "./ver-mascota.component.html",
 	styleUrl: "./ver-mascota.component.css",
 })
 export class VerMascotaComponent implements OnInit {
-	isVerMascota = true
-	loading: boolean = true
-	idMascota!: number
-	idVacuna!: number
-	idDosis!: number
-	mascota$!: Observable<Mascota>
-	deuda: boolean = false
-	expandedElement!: Vacuna | null
+	loading = true
+	idMascota: number
+	mascota?: Mascota
+	vacunas: VacunaFicha[] = []
+	historial: EntradaHistorial[] = []
+	proximas: VacunaFicha[] = []
+	obtenerRutaImagen = obtenerRutaImagen
 
-	@ViewChild(MatPaginator) paginator!: MatPaginator
-
-	displayedColumns: string[] = [
-		"Nro",
-		"Nombre",
-		"Cantidad",
-		"Completada",
-		"acciones",
-	]
-
-	columnsToDisplayWithExpand = [...this.displayedColumns, "expand"]
-
-	dataSource = new MatTableDataSource()
+	readonly etiquetas: Record<EstadoVacuna, string> = {
+		completa: "Completa",
+		vencida: "Dosis vencida",
+		pendiente: "En curso",
+		"sin-dosis": "Sin dosis",
+	}
 
 	constructor(
-		private _mascotaService: MascotaService,
 		private aRoute: ActivatedRoute,
+		private _router: Router,
+		private _mascotaService: MascotaService,
 		private _vacunaService: VacunaService,
 		private _dosisService: DosisService,
-		private _sbService: SnackbarService
+		private _sbService: SnackbarService,
+		private _confirmacion: ConfirmacionService
 	) {
-		this.idMascota = Number(this.aRoute.snapshot.paramMap.get(`idMascota`))
-		this.mascota$ = this._mascotaService.getMascota(this.idMascota)
+		this.idMascota = Number(this.aRoute.snapshot.paramMap.get("idMascota"))
 	}
 
 	ngOnInit(): void {
-		this.mascota$.subscribe({
-			next: (mascota) => {
-        // Datos cargados con éxito, establecer loading en false
-        console.log(mascota);
-
-				this.loading = false
-			},
-			error: (error) => {
-				console.error(error)
-				// Ocurrió un error al cargar los datos, establecer loading en false
-				this.loading = false
-			},
-		})
-
-		this.obtenerVacunas(this.idMascota)
-	}
-
-	handleToggle() {
-		this.deuda = !this.deuda
-	}
-
-	// Implementación de la función
-	obtenerRutaImagen(parametro: Especie | Sexo): string {
-		// Lógica para determinar la ruta de la imagen según el tipo de mascota o sexo
-
-		switch (parametro) {
-			case Especie.GATO:
-				return "../../../assets/img/cat.png"
-			case Especie.PERRO:
-				return "../../../assets/img/dog.png"
-			case Especie.ROEDOR:
-				return "../../../assets/img/squirrel.png"
-			case Especie.CONEJO:
-				return "../../../assets/img/rabbit.png"
-			case Sexo.MACHO:
-				return "../../../assets/img/male-symbol.png"
-			case Sexo.HEMBRA:
-				return "../../../assets/img/female-symbol.png"
-			default:
-				return "../../../assets/img/dog.png" // Imagen predeterminada o ruta vacía si no hay coincidencia
-		}
-	}
-
-	obtenerVacunas(idMascota: number) {
 		this.loading = true
-		this._vacunaService.getVacunas(idMascota).subscribe({
-			next: (data) => {
-				this.dataSource.data = data.map((vacuna, index) => {
-					return {
-						Nro: index + 1,
-						Nombre: vacuna.nombre,
-						Cantidad: vacuna.cantidadDosis,
-						Completada: vacuna.completada,
-						id: vacuna.id as number,
-						Dosis: vacuna.dosificaciones,
-					}
-				})
-			},
-			error: (e) => {
-				alert(`Servidor caido: ${e.message}`)
-			},
-			complete: () => {
-				this.dataSource.paginator = this.paginator
-				this.paginator._intl.itemsPerPageLabel = "Vacunas por página"
+		forkJoin({
+			mascota: this._mascotaService.getMascota(this.idMascota),
+			vacunas: this._vacunaService.getVacunas(this.idMascota),
+		}).subscribe({
+			next: ({ mascota, vacunas }) => {
+				this.mascota = mascota
+				this.armarFicha(vacunas)
 				this.loading = false
 			},
+			error: () => (this.loading = false),
 		})
 	}
 
-	removerVacuna(idVacuna: number) {
+	obtenerVacunas() {
 		this.loading = true
-		this._vacunaService.removeVacuna(this.idMascota, idVacuna).subscribe({
-			next: (data) => {
+		this._vacunaService.getVacunas(this.idMascota).subscribe({
+			next: (vacunas) => {
+				this.armarFicha(vacunas)
+				this.loading = false
+			},
+			error: () => (this.loading = false),
+		})
+	}
+
+	// Ordena las dosis, calcula el estado de cada vacuna y arma el historial cronológico.
+	private armarFicha(vacunas: Vacuna[]) {
+		const hoy = new Date()
+		hoy.setHours(0, 0, 0, 0)
+
+		this.vacunas = vacunas
+			.map((vacuna) => {
+				const dosis = [...(vacuna.dosificaciones ?? [])].sort(
+					(a, b) => +new Date(a.fechaAplicacion) - +new Date(b.fechaAplicacion)
+				)
+				const ultima = dosis[dosis.length - 1]
+				const completa = dosis.length >= vacuna.cantidadDosis
+				const proxima = !completa && ultima ? new Date(ultima.fechaProximaAplicacion) : null
+				let estado: EstadoVacuna = "sin-dosis"
+				if (completa) estado = "completa"
+				else if (proxima) estado = proxima < hoy ? "vencida" : "pendiente"
+				return { ...vacuna, dosis, aplicadas: dosis.length, proxima, estado }
+			})
+			.sort((a, b) => a.nombre.localeCompare(b.nombre))
+
+		this.historial = this.vacunas
+			.flatMap((vacuna) => vacuna.dosis.map((dosis, i) => ({ vacuna, dosis, numero: i + 1 })))
+			.sort((a, b) => +new Date(b.dosis.fechaAplicacion) - +new Date(a.dosis.fechaAplicacion))
+
+		this.proximas = this.vacunas
+			.filter((vacuna) => vacuna.proxima)
+			.sort((a, b) => +a.proxima! - +b.proxima!)
+	}
+
+	porcentaje(vacuna: VacunaFicha): number {
+		return Math.min(100, (vacuna.aplicadas / vacuna.cantidadDosis) * 100)
+	}
+
+	eliminarMascota() {
+		if (!this.mascota) return
+		this._confirmacion
+			.confirmar({
+				titulo: `¿Borrar a ${this.mascota.nombre}?`,
+				mensaje: "Se borran también sus vacunas y dosis registradas. No se puede deshacer.",
+			})
+			.subscribe((confirmado) => {
+				if (!confirmado) return
 				this.loading = true
-			},
-			error: (err) => {
-				if (err) return console.log(err)
-			},
-			complete: () => {
-				this.loading = false
-				this.obtenerVacunas(this.idMascota)
-				this._sbService.mostrarMensajeExitoso("Vacuna eliminada con éxito!")
-			},
-		})
+				this._mascotaService.deleteMascota(this.idMascota).subscribe({
+					next: () => {
+						this._sbService.mostrarMensajeExitoso("Mascota borrada")
+						this._router.navigate(["/mascotas"])
+					},
+					error: () => (this.loading = false),
+				})
+			})
 	}
 
-	removerDosis(idDosis: number, idVacuna?: number) {
-		if (this.expandedElement) {
-			// Guarda el estado de la fila expandida actual
-			const filaExpandidaAnterior = this.expandedElement
+	removerVacuna(vacuna: VacunaFicha) {
+		this._confirmacion
+			.confirmar({
+				titulo: `¿Borrar la vacuna ${vacuna.nombre}?`,
+				mensaje: vacuna.aplicadas
+					? `Se borran también las ${vacuna.aplicadas} dosis registradas.`
+					: "Todavía no tiene dosis registradas.",
+			})
+			.subscribe((confirmado) => {
+				if (!confirmado || !vacuna.id) return
+				this.loading = true
+				this._vacunaService.removeVacuna(this.idMascota, vacuna.id).subscribe({
+					next: () => {
+						this._sbService.mostrarMensajeExitoso("Vacuna borrada")
+						this.obtenerVacunas()
+					},
+					error: () => (this.loading = false),
+				})
+			})
+	}
 
-			this.loading = true
-			if (idVacuna && idDosis) {
-				this._dosisService
-					.removeDosis(this.idMascota, idVacuna, idDosis)
-					.subscribe({
-						next: () => {
-							// Restaura el estado de la fila expandida
-							this.expandedElement = filaExpandidaAnterior
-
-							// Maneja la respuesta exitosa
-							this.loading = false
-							// Vuelve a cargar las vacunas para reflejar los cambios
-							this.obtenerVacunas(this.idMascota)
-							this._sbService.mostrarMensajeExitoso(
-								"Dosis eliminadas con éxito!"
-							)
-						},
-						error: (err) => {
-							console.error(err)
-							// Manejar el error, si es necesario
-							this.loading = false
-						},
-					})
-			}
-		}
+	removerDosis(vacuna: VacunaFicha, dosis: Dosis, numero: number) {
+		this._confirmacion
+			.confirmar({
+				titulo: `¿Borrar la dosis ${numero} de ${vacuna.nombre}?`,
+				mensaje: "Usalo para corregir una carga equivocada.",
+			})
+			.subscribe((confirmado) => {
+				if (!confirmado || !vacuna.id || !dosis.id) return
+				this.loading = true
+				this._dosisService.removeDosis(this.idMascota, vacuna.id, dosis.id).subscribe({
+					next: () => {
+						this._sbService.mostrarMensajeExitoso("Dosis borrada")
+						this.obtenerVacunas()
+					},
+					error: () => (this.loading = false),
+				})
+			})
 	}
 }

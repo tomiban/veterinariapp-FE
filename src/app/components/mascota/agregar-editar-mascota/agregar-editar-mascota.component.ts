@@ -1,35 +1,26 @@
-import { AsyncPipe, NgStyle } from "@angular/common"
 import { Component, OnInit } from "@angular/core"
+import { ActivatedRoute, Router, RouterLink } from "@angular/router"
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms"
 import { MatCardModule } from "@angular/material/card"
 import { MatProgressBarModule } from "@angular/material/progress-bar"
-import { MatGridListModule } from "@angular/material/grid-list"
 import { MatFormFieldModule } from "@angular/material/form-field"
 import { MatInputModule } from "@angular/material/input"
 import { MatIconModule } from "@angular/material/icon"
 import { MatButtonModule } from "@angular/material/button"
-import { ActivatedRoute, Router, RouterLink } from "@angular/router"
-import {
-	FormBuilder,
-	FormGroup,
-	FormsModule,
-	ReactiveFormsModule,
-	Validators,
-} from "@angular/forms"
-import { Mascota } from "../../../interfaces/mascota"
-import { MascotaService } from "../../../services/mascota.service"
-import { SnackbarService } from "../../../services/snackbar.service"
 import { MatSelectModule } from "@angular/material/select"
-import { SelectSexo } from "../../../interfaces/selectSexo"
+import { Mascota } from "../../../interfaces/mascota"
 import { Dueño } from "../../../interfaces/dueño"
+import { MascotaService } from "../../../services/mascota.service"
+import { DueñoService } from "../../../services/dueno.service"
+import { SnackbarService } from "../../../services/snackbar.service"
+import { ESPECIES, SEXOS } from "../../../constants/especies"
 
 @Component({
 	selector: "app-agregar-editar-mascota",
 	standalone: true,
 	imports: [
-		NgStyle,
 		MatProgressBarModule,
 		MatCardModule,
-		MatGridListModule,
 		MatFormFieldModule,
 		MatInputModule,
 		MatSelectModule,
@@ -37,159 +28,99 @@ import { Dueño } from "../../../interfaces/dueño"
 		MatButtonModule,
 		RouterLink,
 		ReactiveFormsModule,
-		AsyncPipe,
-		FormsModule,
 	],
 	templateUrl: "./agregar-editar-mascota.component.html",
-	styleUrl: "./agregar-editar-mascota.component.css",
 })
 export class AgregarEditarMascotaComponent implements OnInit {
-	isVerMascota: boolean = true
-	loading: boolean = false
+	loading = false
 	form: FormGroup
 	id: number
 	titulo: string
-	selectedValue!: string
-
-	sexos: SelectSexo[] = [
-		{ value: "Macho", viewValue: "Macho" },
-		{ value: "Hembra", viewValue: "Hembra" },
-	]
+	especies = ESPECIES
+	sexos = SEXOS
+	responsables: Dueño[] = []
 
 	constructor(
 		private fb: FormBuilder,
 		private _mascotaService: MascotaService,
+		private _dueñoService: DueñoService,
 		private _sbService: SnackbarService,
 		private _router: Router,
 		private aRoute: ActivatedRoute
 	) {
-		this.titulo = "Registrar "
-
+		// Mismos límites que valida la API (CreateMascotaDto).
 		this.form = this.fb.group({
-			nombre: ["", Validators.required],
+			nombre: ["", [Validators.required, Validators.maxLength(50)]],
 			especie: ["", Validators.required],
 			sexo: ["Macho", Validators.required],
-			color: ["", Validators.required],
-			raza: ["", Validators.required],
-			edad: ["", Validators.required],
-			peso: ["", Validators.required],
-			nombreDueño: ["", Validators.required],
-			telefono: ["", Validators.required],
-			domicilio: ["", Validators.required],
+			raza: ["", [Validators.required, Validators.maxLength(50)]],
+			color: ["", [Validators.required, Validators.maxLength(50)]],
+			edad: [null, [Validators.required, Validators.min(0), Validators.max(99), Validators.pattern(/^\d+$/)]],
+			peso: [null, [Validators.required, Validators.min(0.1), Validators.max(1000)]],
+			dueñoId: [null],
 		})
 		this.id = Number(this.aRoute.snapshot.paramMap.get("idMascota"))
+		this.titulo = this.id ? "Editar mascota" : "Nueva mascota"
+
+		// Desde la ficha de un dueño se llega con ?dueno=ID para dejarlo preseleccionado.
+		const dueñoPreseleccionado = Number(this.aRoute.snapshot.queryParamMap.get("dueno"))
+		if (dueñoPreseleccionado) this.form.patchValue({ dueñoId: dueñoPreseleccionado })
+	}
+
+	get volverA(): any[] {
+		const dueño = this.aRoute.snapshot.queryParamMap.get("dueno")
+		if (this.id) return ["/mascotas", this.id]
+		return dueño ? ["/duenos", dueño] : ["/mascotas"]
 	}
 
 	ngOnInit(): void {
-		if (this.id != 0) {
-			this.titulo = "Editar "
-			this.obtenerMascota(this.id)
+		this._dueñoService.getDueños().subscribe((dueños) => (this.responsables = dueños))
+
+		if (this.id) {
+			this.loading = true
+			this._mascotaService.getMascota(this.id).subscribe({
+				next: (mascota: Mascota) => {
+					this.form.patchValue({ ...mascota, dueñoId: mascota.dueñoId ?? null })
+					this.loading = false
+				},
+				error: () => (this.loading = false),
+			})
 		}
 	}
 
-	obtenerMascota(id: number) {
-		this._mascotaService.getMascota(id).subscribe({
-			next: (mascota: Mascota) => {
-				console.log(mascota.dueño?.telefono)
-
-				this.form.patchValue({
-					nombre: mascota.nombre,
-					especie: mascota.especie,
-					sexo: mascota.sexo,
-					color: mascota.color,
-					raza: mascota.raza,
-					peso: mascota.peso,
-					edad: mascota.edad,
-					nombreDueño: mascota.dueño?.nombre,
-					telefono: mascota.dueño?.telefono,
-					domicilio: mascota.dueño?.domicilio,
-				})
-
-      console.log(this.form.value);
-
-
-			},
-			error: () => {},
-			complete: () => {},
-		})
+	error(campo: string, tipo: string): boolean {
+		return !!this.form.get(campo)?.hasError(tipo)
 	}
 
-	agregarMascota(mascota: Mascota, dueño: Dueño) {
-		this._mascotaService.addMascota(mascota).subscribe({
-			next: (mascota) => {
-				this.loading = true
-				console.log(mascota, mascota.id)
-
-				if (mascota.id) {
-					const mascotaId: number = mascota.id
-					this._mascotaService.addDueño(mascotaId, dueño).subscribe((data) => {
-						console.log(data)
-					})
-				}
-			},
-			error: (error) => {
-				if (error) console.log(error)
-			},
-			complete: () => {
-				this.loading = false
-				this._router.navigate(["/listado-mascota"])
-				this._sbService.mostrarMensajeExitoso("Mascota  registrada  con éxito")
-			},
-		})
-	}
-
-	editarMascota(id: number, mascota: Mascota) {
-		this._mascotaService.editMascota(id, mascota).subscribe({
-			next: (data) => {
-				this.loading = true
-			},
-			error: (error) => {
-				if (error) console.log(error)
-			},
-			complete: () => {
-				this.loading = false
-				this._router.navigate(["/listado-mascota"])
-				this._sbService.mostrarMensajeExitoso("Mascota actualizada con éxito")
-			},
-		})
-	}
-
-	agregarEditarMascota() {
-		const {
-			nombre,
-			especie,
-			color,
-			raza,
-			peso,
-			edad,
-			sexo,
-			nombreDueño,
-			domicilio,
-			telefono,
-		} = this.form.value
-
+	guardar() {
+		if (this.form.invalid) {
+			this.form.markAllAsTouched()
+			return
+		}
+		const valores = this.form.value
 		const mascota: Mascota = {
-			nombre,
-			especie,
-			sexo,
-			color,
-			raza,
-			edad,
-			peso,
+			nombre: valores.nombre.trim(),
+			especie: valores.especie,
+			sexo: valores.sexo,
+			raza: valores.raza.trim(),
+			color: valores.color.trim(),
+			edad: Number(valores.edad),
+			peso: Number(valores.peso),
+			dueñoId: valores.dueñoId,
 		}
 
-		const dueño: Dueño = {
-			nombre: nombreDueño,
-			telefono,
-			domicilio,
-		}
+		this.loading = true
+		const pedido = this.id
+			? this._mascotaService.editMascota(this.id, mascota)
+			: this._mascotaService.addMascota(mascota)
 
-		console.log(dueño)
-
-		if (this.id != 0) {
-			this.editarMascota(this.id, mascota)
-		} else {
-			this.agregarMascota(mascota, dueño)
-		}
+		pedido.subscribe({
+			next: (guardada) => {
+				this.loading = false
+				this._sbService.mostrarMensajeExitoso(this.id ? "Mascota actualizada" : "Mascota registrada")
+				this._router.navigate(["/mascotas", guardada.id])
+			},
+			error: () => (this.loading = false),
+		})
 	}
 }

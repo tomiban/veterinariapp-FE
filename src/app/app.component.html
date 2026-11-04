@@ -1,1 +1,22 @@
-<router-outlet></router-outlet>
+<mat-toolbar color="primary" class="toolbar">
+	<a routerLink="/mascotas" class="marca">
+		<mat-icon>local_hospital</mat-icon>
+		<span>VeterinariApp</span>
+	</a>
+	<nav class="nav">
+		@for (seccion of secciones; track seccion.ruta) {
+		<a
+			mat-button
+			[routerLink]="seccion.ruta"
+			routerLinkActive="activa"
+			[attr.aria-label]="seccion.nombre">
+			<mat-icon>{{ seccion.icono }}</mat-icon>
+			<span class="nav-texto">{{ seccion.nombre }}</span>
+		</a>
+		}
+	</nav>
+</mat-toolbar>
+
+<main>
+	<router-outlet></router-outlet>
+</main>

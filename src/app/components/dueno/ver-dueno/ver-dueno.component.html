@@ -1,0 +1,74 @@
+@if (loading) {
+<mat-progress-bar mode="indeterminate" color="accent"></mat-progress-bar>
+}
+
+<div class="container">
+	<a class="volver" routerLink="/duenos"><mat-icon inline>arrow_back</mat-icon> Dueños</a>
+
+	@if (ficha) {
+	<header class="page-header">
+		<div>
+			<h1>{{ ficha.nombre }}</h1>
+			<p>{{ ficha.mascotas?.length ? ficha.mascotas?.length + (ficha.mascotas?.length === 1 ? " mascota" : " mascotas") : "Sin mascotas asignadas" }}</p>
+		</div>
+		<div class="acciones">
+			<a mat-stroked-button [routerLink]="['/duenos/editar', ficha.id]"><mat-icon>edit</mat-icon> Editar</a>
+			<button mat-stroked-button color="warn" (click)="eliminar()"><mat-icon>delete</mat-icon> Borrar</button>
+		</div>
+	</header>
+
+	<div class="layout">
+		<mat-card class="contacto">
+			<mat-card-header>
+				<mat-card-title>Contacto</mat-card-title>
+			</mat-card-header>
+			<mat-card-content>
+				<dl>
+					<dt>Teléfono</dt>
+					<dd>
+						@if (ficha.telefono) {
+						<a [href]="'tel:' + ficha.telefono">{{ ficha.telefono }}</a>
+						} @else { — }
+					</dd>
+					<dt>Domicilio</dt>
+					<dd>{{ ficha.domicilio || "—" }}</dd>
+				</dl>
+			</mat-card-content>
+		</mat-card>
+
+		<section>
+			<div class="seccion-titulo">
+				<h2>Mascotas</h2>
+				<a mat-flat-button color="primary" routerLink="/mascotas/agregar" [queryParams]="{ dueno: ficha.id }">
+					<mat-icon>add</mat-icon> Agregar mascota
+				</a>
+			</div>
+
+			@if (ficha.mascotas?.length) {
+			<div class="mascotas">
+				@for (mascota of ficha.mascotas; track mascota.id) {
+				<a class="mascota panel" [routerLink]="['/mascotas', mascota.id]">
+					<img [src]="obtenerRutaImagen(mascota.especie)" [alt]="mascota.especie ?? ''" />
+					<div>
+						<strong>{{ mascota.nombre }}</strong>
+						<span>{{ mascota.especie }} · {{ mascota.raza }} · {{ mascota.sexo }}</span>
+					</div>
+					<mat-icon class="flecha">chevron_right</mat-icon>
+				</a>
+				}
+			</div>
+			} @else {
+			<div class="panel">
+				<app-estado-vacio titulo="Sin mascotas" mensaje="Registrá una mascota nueva o asignale una existente desde su ficha."></app-estado-vacio>
+			</div>
+			}
+		</section>
+	</div>
+	} @else if (!loading) {
+	<div class="panel">
+		<app-estado-vacio icono="person_off" titulo="No encontramos este dueño">
+			<a mat-stroked-button color="primary" routerLink="/duenos">Ver todos los dueños</a>
+		</app-estado-vacio>
+	</div>
+	}
+</div>

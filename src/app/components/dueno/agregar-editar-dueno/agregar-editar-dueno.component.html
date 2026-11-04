@@ -1,0 +1,52 @@
+@if (loading) {
+<mat-progress-bar mode="indeterminate" color="accent"></mat-progress-bar>
+}
+
+<div class="container">
+	<a class="volver" [routerLink]="id ? ['/duenos', id] : '/duenos'"><mat-icon inline>arrow_back</mat-icon> Volver</a>
+	<header class="page-header">
+		<div>
+			<h1>{{ titulo }}</h1>
+			<p>Nombre y datos de contacto. Las mascotas se le asignan desde su ficha.</p>
+		</div>
+	</header>
+
+	<mat-card>
+		<mat-card-content>
+			<form [formGroup]="form" (ngSubmit)="guardar()" class="form-grid">
+				<mat-form-field appearance="outline" class="ancho-completo">
+					<mat-label>Nombre completo</mat-label>
+					<input matInput formControlName="nombre" autocomplete="name" />
+					@if (form.get('nombre')?.hasError('required')) {
+					<mat-error>El nombre es obligatorio</mat-error>
+					} @else if (form.get('nombre')?.hasError('maxlength')) {
+					<mat-error>Máximo 100 caracteres</mat-error>
+					}
+				</mat-form-field>
+
+				<mat-form-field appearance="outline">
+					<mat-label>Teléfono</mat-label>
+					<input matInput formControlName="telefono" type="tel" autocomplete="tel" placeholder="341 555-1234" />
+					@if (form.get('telefono')?.hasError('pattern')) {
+					<mat-error>Solo números, espacios, guiones, paréntesis o +</mat-error>
+					} @else if (form.get('telefono')?.hasError('maxlength')) {
+					<mat-error>Máximo 30 caracteres</mat-error>
+					}
+				</mat-form-field>
+
+				<mat-form-field appearance="outline">
+					<mat-label>Domicilio</mat-label>
+					<input matInput formControlName="domicilio" autocomplete="street-address" />
+					@if (form.get('domicilio')?.hasError('maxlength')) {
+					<mat-error>Máximo 150 caracteres</mat-error>
+					}
+				</mat-form-field>
+
+				<div class="form-acciones ancho-completo">
+					<a mat-button [routerLink]="id ? ['/duenos', id] : '/duenos'">Cancelar</a>
+					<button mat-flat-button color="primary" type="submit" [disabled]="loading">Guardar</button>
+				</div>
+			</form>
+		</mat-card-content>
+	</mat-card>
+</div>
